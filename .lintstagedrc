@@ -1,0 +1,5 @@
+{
+  "*.{js,ts,vue,css,scss}": [
+    "eslint . --report-unused-disable-directives --ignore-path .gitignore --fix"
+  ]
+}
