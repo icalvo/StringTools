@@ -35,7 +35,11 @@ const validatePossibleStretch = ref(true)
 
 const fingerings = computed(() => {
   const notes = computedNotes
-  if (notes.value === null) return null
+  if (notes.value.length < 2) {
+    console.log("I need at least two notes")
+    return []
+  }
+
   const instrument = instruments[selectedInstrument.value]
   const validations = []
   if (validateNoGaps.value) validations.push(hasNoGaps)

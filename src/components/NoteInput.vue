@@ -1,35 +1,31 @@
 ﻿<script setup lang="ts">
 import {computed, ref} from "vue";
 import {noteNumber} from "@/data/fingerings";
-  withDefaults(
-      defineProps<{
-        notes: Array<number>
-      }>(),
-      { notes: () => [ 43, 50 ]}
-  )
-  const notes = ref('G3 D4')
-  const computedNotes = computed(() => {
-    const noteNumbers = notes.value
-        .split(" ")
-        .map(noteName => ({noteName, noteNumber: noteNumber(noteName)}))
-  
-    for (const result of noteNumbers) {
-      if (typeof result.noteNumber === 'string') {
-        for (const r2 of noteNumbers.filter(r => typeof r.noteNumber === 'string')) {
-          console.log(`${r2.noteName} is invalid: ${r2.noteNumber}`)
-        }
-  
-        return []
+
+withDefaults(
+    defineProps<{
+      notes: Array<number>
+    }>(),
+    { notes: () => [ 43, 50 ]}
+)
+const notes = ref('G3 D4')
+const computedNotes = computed(() => {
+  const noteNumbers = notes.value
+      .split(' ')
+      .map(noteName => ({noteName, noteNumber: noteNumber(noteName)}))
+
+  for (const result of noteNumbers) {
+    if (typeof result.noteNumber === 'string') {
+      for (const r2 of noteNumbers.filter(r => typeof r.noteNumber === 'string')) {
+        console.log(`${r2.noteName} is invalid: ${r2.noteNumber}`)
       }
-    }
-  
-    if (noteNumbers.length < 2) {
-      console.log("I need at least two notes")
+
       return []
     }
-  
-    return noteNumbers.map(r => r.noteNumber).filter(f => typeof f === 'number')
-  })
+  }
+
+  return noteNumbers.map(r => r.noteNumber).filter(f => typeof f === 'number')
+})
 </script>
 
 <template>

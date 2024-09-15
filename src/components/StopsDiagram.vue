@@ -5,7 +5,7 @@ import type {Stop} from "@/data/types";
 import {getStopRelPos} from "@/data/fingerings";
 
 const props = defineProps<{
-  fingerings: Array<Array<Stop>> | null,
+  fingerings: Array<Array<Stop>>,
   instrumentIndex: number
 }>()
 
@@ -140,9 +140,9 @@ async function drawAll() {
 
   await drawInstrument(instrument);
 
-  if (fingerings !== null)
-    drawFingerings(instrument, fingerings)
+  drawFingerings(instrument, fingerings)
 }
+
 watch(() => props.fingerings, () => {
   drawAll()
 });
@@ -151,6 +151,7 @@ watch(() => props.instrumentIndex, () => {
   drawAll()
 });
 
+onMounted(() => drawAll())
 </script>
 
 <template>
