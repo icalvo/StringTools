@@ -1,13 +1,10 @@
 ﻿<script setup lang="ts">
 import {computed, onMounted, ref, watch} from "vue";
 import {noteName, noteNumber} from "@/data/fingerings";
-function def<T>(value: T|null|undefined, defaultValue: T): T {
-  return value? value : defaultValue
-}
 
 const notes = defineModel<Array<number>>()
 
-const notesToRepr = computed(() => def(notes.value?.map(n => noteName(n)).join(' '), ''))
+const notesToRepr = computed(() => notes.value?.map(n => noteName(n)).join(' ') ?? '')
 const representation = ref('')
 
 const reprToNotes = computed(() => {

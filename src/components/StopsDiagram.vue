@@ -118,7 +118,7 @@ function drawFingerings(instrument: Instrument, fingerings: Stop[][]) {
       return r;
     });
   });
-  const y = groupBy(x, ([s, _, __]) => `${s.stopIndex} ${s.stringIndex}`);
+  //const y = groupBy(x, ([s, _, __]) => `${s.stopIndex} ${s.stringIndex}`);
 
   for (let fingeringIndex = 0; fingeringIndex < fingerings.length; fingeringIndex++) {
     const fingering = fingerings[fingeringIndex]
