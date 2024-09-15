@@ -1,4 +1,2 @@
-﻿echo "[PRE-PUSH] Running type checks..."
 npm run type-check
-echo "[PRE-PUSH] Running unit tests..."
 npm run test:commit
