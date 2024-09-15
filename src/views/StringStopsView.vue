@@ -3,7 +3,7 @@ import StopsDiagram from '@/components/StopsDiagram.vue'
 import { computed, ref } from 'vue'
 import { instruments } from '@/data/instruments'
 import { calculateFingerings, hasNoGaps, hasPossibleStretch } from '@/data/fingerings'
-import Score from '@/components/Score.vue'
+import ScoreDisplay from '@/components/ScoreDisplay.vue'
 import NoteInput from '@/components/NotesInput.vue'
 import InstrumentSelector from '@/components/InstrumentSelector.vue'
 import FingeringsDescription from '@/components/FingeringsDescription.vue'
@@ -64,7 +64,7 @@ const fingerings = computed(() => {
         class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
         placeholder="C5 G5"
       />
-      <Score :notes="parsedNotes" :instrument-index="selectedInstrument" />
+      <ScoreDisplay :notes="parsedNotes" :instrument-index="selectedInstrument" />
       <FingeringsDescription :fingerings="fingerings" :instrument="instrument" />
       <div id="description"></div>
     </div>
