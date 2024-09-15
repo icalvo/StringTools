@@ -8,7 +8,7 @@ import Score from "@/components/Score.vue";
 const selectedInstrument = ref(0)
 const options = ref(instruments.map((instrument, i) => ({ text: instrument.name, value: i })))
 const notes = ref('G3 D4')
-const computedNotes = computed(() => {
+const parsedNotes = computed(() => {
   const noteNumbers = notes.value
       .split(" ")
       .map(noteName => ({noteName, noteNumber: noteNumber(noteName)}))
@@ -34,7 +34,7 @@ const validateNoGaps = ref(true)
 const validatePossibleStretch = ref(true)
 
 const fingerings = computed(() => {
-  const notes = computedNotes
+  const notes = parsedNotes
   if (notes.value.length < 2) {
     console.log("I need at least two notes")
     return []
@@ -68,9 +68,9 @@ const fingerings = computed(() => {
       <input type="checkbox" id="hasNoGaps" name="hasNoGaps" v-model="validateNoGaps" class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="C5 G5" />
       <label for="hasNoGaps">Discard impossible stretches</label>
       <input type="checkbox" id="hasPossibleStretch" name="hasPossibleStretch" v-model="validatePossibleStretch" class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="C5 G5" />
-      <Score :notes="computedNotes" :instrument-index="selectedInstrument" />
+      <Score :notes="parsedNotes" :instrument-index="selectedInstrument" />
       <div id="description"></div>
-      <div>{{ computedNotes }}</div>
+      <div>{{ parsedNotes }}</div>
     </div>
   </div>
 
