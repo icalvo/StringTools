@@ -24,14 +24,6 @@ async function loadImage(src: string) {
   return promise
 }
 
-function circleSector(x: number, y: number, r: number, a1: number, a2: number, hue: number) {
-  ctx.beginPath()
-  ctx.arc(x, y, r, a1, a2)
-  ctx.lineTo(x, y)
-  ctx.fillStyle = `hsl(${hue} 100% 50%)`
-  ctx.fill()
-}
-
 function circle(x: number, y: number, r: number, hue: number) {
   ctx.beginPath()
   ctx.arc(x, y, r, 0, Math.PI * 2)
@@ -103,24 +95,24 @@ function drawStop(
   }
 }
 
-function groupBy<T>(array: T[], predicate: (value: T, index: number, array: T[]) => string) {
-  return array.reduce(
-    (acc, value, index, array) => {
-      ;(acc[predicate(value, index, array)] ||= []).push(value)
-      return acc
-    },
-    {} as { [key: string]: T[] }
-  )
-}
+// function groupBy<T>(array: T[], predicate: (value: T, index: number, array: T[]) => string) {
+//   return array.reduce(
+//     (acc, value, index, array) => {
+//       ;(acc[predicate(value, index, array)] ||= []).push(value)
+//       return acc
+//     },
+//     {} as { [key: string]: T[] }
+//   )
+// }
 
 function drawFingerings(instrument: Instrument, fingerings: Stop[][]) {
-  const x = fingerings.flatMap((fingering, fingeringIndex) => {
-    const hardFingering = fingering.some((stop) => ('hard' in stop ? stop.hard : false))
-    return fingering.map((s) => {
-      const r: [Stop, number, boolean] = [s, fingeringIndex, hardFingering]
-      return r
-    })
-  })
+  // const x = fingerings.flatMap((fingering, fingeringIndex) => {
+  //   const hardFingering = fingering.some((stop) => ('hard' in stop ? stop.hard : false))
+  //   return fingering.map((s) => {
+  //     const r: [Stop, number, boolean] = [s, fingeringIndex, hardFingering]
+  //     return r
+  //   })
+  // })
   //const y = groupBy(x, ([s, _, __]) => `${s.stopIndex} ${s.stringIndex}`);
 
   for (let fingeringIndex = 0; fingeringIndex < fingerings.length; fingeringIndex++) {
