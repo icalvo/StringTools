@@ -1,5 +1,5 @@
 ﻿export interface Stop {
-    stringIndex: number,
-    noteNumber: number,
-    stopIndex: number
+  stringIndex: number
+  noteNumber: number
+  stopIndex: number
 }

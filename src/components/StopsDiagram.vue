@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import {useTemplateRef, onMounted, watch} from 'vue'
-import {type Instrument, instruments, type InstrumentString} from '@/data/instruments'
-import type {Stop} from "@/data/types";
-import {getStopRelPos} from "@/data/fingerings";
+import { useTemplateRef, onMounted, watch } from 'vue'
+import { type Instrument, instruments, type InstrumentString } from '@/data/instruments'
+import type { Stop } from '@/data/types'
+import { getStopRelPos } from '@/data/fingerings'
 
 const props = defineProps<{
-  fingerings: Array<Array<Stop>>,
+  fingerings: Array<Array<Stop>>
   instrumentIndex: number
 }>()
 
@@ -57,10 +57,10 @@ function drawStrings(instrument: Instrument) {
     ctx.strokeStyle = 'rgb(0 100 200)'
     ctx.stroke()
     for (let stopIndex = 0; stopIndex <= instrument.stops; stopIndex++) {
-      const stopRelPos = getStopRelPos(stopIndex);
-      const stopAbsPos = getStopAbsPos(string, stopRelPos);
-      const x = stopAbsPos[0];
-      const y = stopAbsPos[1];
+      const stopRelPos = getStopRelPos(stopIndex)
+      const stopAbsPos = getStopAbsPos(string, stopRelPos)
+      const x = stopAbsPos[0]
+      const y = stopAbsPos[1]
       ctx.beginPath()
       ctx.arc(x, y, 3, 0, Math.PI * 2)
       ctx.fillStyle = 'white'
@@ -72,12 +72,12 @@ function drawStrings(instrument: Instrument) {
 }
 
 function getStopAbsPos(string: InstrumentString, stopRelPos: number): number[] {
-  const stringStartX = string.startPositionInImage[0];
-  const stringStartY = string.startPositionInImage[1];
-  const stringEndX = string.endPositionInImage[0];
-  const stringEndY = string.endPositionInImage[1];
-  const stopX = stringStartX + (stringEndX - stringStartX) * stopRelPos;
-  const stopY = stringStartY + (stringEndY - stringStartY) * stopRelPos;
+  const stringStartX = string.startPositionInImage[0]
+  const stringStartY = string.startPositionInImage[1]
+  const stringEndX = string.endPositionInImage[0]
+  const stringEndY = string.endPositionInImage[1]
+  const stopX = stringStartX + (stringEndX - stringStartX) * stopRelPos
+  const stopY = stringStartY + (stringEndY - stringStartY) * stopRelPos
   return [stopX, stopY]
 }
 
@@ -88,14 +88,14 @@ function drawStop(
   fingeringIndex: number,
   hard: boolean
 ) {
-  const stopAbsPos = getStopAbsPos(instrument.strings[stringIndex], stopPos);
-  const stopX = stopAbsPos[0];
-  const stopY = stopAbsPos[1];
-  const hue = fingeringIndex * 40;
+  const stopAbsPos = getStopAbsPos(instrument.strings[stringIndex], stopPos)
+  const stopX = stopAbsPos[0]
+  const stopY = stopAbsPos[1]
+  const hue = fingeringIndex * 40
   console.debug(
     `Fingering ${fingeringIndex + 1} at (${stopX}, ${stopY}), hue ${hue}, stopPos ${stopPos}`
   )
-  const r = hard ? 4 : 8;
+  const r = hard ? 4 : 8
   if (stopPos === 0) {
     circumference(stopX, stopY, r, hue)
   } else {
@@ -104,52 +104,67 @@ function drawStop(
 }
 
 function groupBy<T>(array: T[], predicate: (value: T, index: number, array: T[]) => string) {
-  return array.reduce((acc, value, index, array) => {
-    (acc[predicate(value, index, array)] ||= []).push(value);
-    return acc;
-  }, {} as { [key: string]: T[] });
+  return array.reduce(
+    (acc, value, index, array) => {
+      ;(acc[predicate(value, index, array)] ||= []).push(value)
+      return acc
+    },
+    {} as { [key: string]: T[] }
+  )
 }
 
 function drawFingerings(instrument: Instrument, fingerings: Stop[][]) {
   const x = fingerings.flatMap((fingering, fingeringIndex) => {
-    const hardFingering = fingering.some(stop => 'hard' in stop ? stop.hard : false);
-    return fingering.map(s => {
-      const r:[Stop, number, boolean] = [s, fingeringIndex, hardFingering];
-      return r;
-    });
-  });
+    const hardFingering = fingering.some((stop) => ('hard' in stop ? stop.hard : false))
+    return fingering.map((s) => {
+      const r: [Stop, number, boolean] = [s, fingeringIndex, hardFingering]
+      return r
+    })
+  })
   //const y = groupBy(x, ([s, _, __]) => `${s.stopIndex} ${s.stringIndex}`);
 
   for (let fingeringIndex = 0; fingeringIndex < fingerings.length; fingeringIndex++) {
     const fingering = fingerings[fingeringIndex]
-    const hardFingering = fingering.some(stop => 'hard' in stop ? stop.hard : false);
-    fingering.forEach(stop => {
-      drawStop(instrument, stop.stringIndex, getStopRelPos(stop.stopIndex), fingeringIndex, hardFingering);
-    });
+    const hardFingering = fingering.some((stop) => ('hard' in stop ? stop.hard : false))
+    fingering.forEach((stop) => {
+      drawStop(
+        instrument,
+        stop.stringIndex,
+        getStopRelPos(stop.stopIndex),
+        fingeringIndex,
+        hardFingering
+      )
+    })
   }
 }
 
 async function drawInstrument(instrument: Instrument) {
-  await loadImage(instrument.image);
-  drawStrings(instrument);
+  await loadImage(instrument.image)
+  drawStrings(instrument)
 }
 async function drawAll() {
   ctx = canvas.value?.getContext('2d')!
   const instrument = instruments[props.instrumentIndex]
   const fingerings = props.fingerings
 
-  await drawInstrument(instrument);
+  await drawInstrument(instrument)
 
   drawFingerings(instrument, fingerings)
 }
 
-watch(() => props.fingerings, () => {
-  drawAll()
-});
+watch(
+  () => props.fingerings,
+  () => {
+    drawAll()
+  }
+)
 
-watch(() => props.instrumentIndex, () => {
-  drawAll()
-});
+watch(
+  () => props.instrumentIndex,
+  () => {
+    drawAll()
+  }
+)
 
 onMounted(() => drawAll())
 </script>

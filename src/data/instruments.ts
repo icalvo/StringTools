@@ -1,9 +1,9 @@
-import {noteNumber} from "@/data/fingerings";
+import { noteNumber } from '@/data/fingerings'
 
 function nn(noteName: string) {
   const n = noteNumber(noteName)
-  if (typeof n === 'string') throw `Invalid note name: ${n}`;
-  return n;
+  if (typeof n === 'string') throw `Invalid note name: ${n}`
+  return n
 }
 export interface InstrumentString {
   name: string
