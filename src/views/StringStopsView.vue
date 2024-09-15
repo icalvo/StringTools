@@ -4,38 +4,17 @@ import {computed, ref} from "vue";
 import {instruments} from "@/data/instruments";
 import {calculateFingerings, hasNoGaps, hasPossibleStretch, noteNumber} from "@/data/fingerings";
 import Score from "@/components/Score.vue";
+import NoteInput from "@/components/NotesInput.vue";
+import InstrumentSelector from "@/components/InstrumentSelector.vue";
 
 const selectedInstrument = ref(0)
-const options = ref(instruments.map((instrument, i) => ({ text: instrument.name, value: i })))
-const notes = ref('G3 D4')
-const parsedNotes = computed(() => {
-  const noteNumbers = notes.value
-      .split(" ")
-      .map(noteName => ({noteName, noteNumber: noteNumber(noteName)}))
-
-  for (const result of noteNumbers) {
-    if (typeof result.noteNumber === 'string') {
-      for (const r2 of noteNumbers.filter(r => typeof r.noteNumber === 'string')) {
-        console.log(`${r2.noteName} is invalid: ${r2.noteNumber}`)
-      }
-
-      return []
-    }
-  }
-
-  if (noteNumbers.length < 2) {
-    console.log("I need at least two notes")
-    return []
-  }
-
-  return noteNumbers.map(r => r.noteNumber).filter(f => typeof f === 'number')
-})
+const parsedNotes = ref([43, 50])
 const validateNoGaps = ref(true)
 const validatePossibleStretch = ref(true)
 
 const fingerings = computed(() => {
-  const notes = parsedNotes
-  if (notes.value.length < 2) {
+  const notes = parsedNotes.value
+  if (notes.length < 2) {
     console.log("I need at least two notes")
     return []
   }
@@ -46,7 +25,7 @@ const fingerings = computed(() => {
   if (validatePossibleStretch.value) validations.push(hasPossibleStretch)
   return calculateFingerings(
       instrument,
-      notes.value, 
+      notes, 
       validations);
 })
 </script>
@@ -56,14 +35,9 @@ const fingerings = computed(() => {
   <div class="flex flex-row p-4 border-2 border-red-500">
     <div class="flex-grow">
       <label for="instrument">Instrument</label>
-
-      <select id="instrument" name="instrument" v-model="selectedInstrument" class="border-2 py-1.5 pl-1">
-        <option v-for="option in options" :value="option.value">
-          {{ option.text }}
-        </option>
-      </select>
+      <InstrumentSelector id="instrument" name="instrument" v-model="selectedInstrument" class="border-2 py-1.5 pl-1" />
       <label for="notes">Notes</label>
-      <input type="text" id="notes" name="notes" v-model="notes" class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="C5 G5" />
+      <NoteInput id="notes" name="notes" v-model="parsedNotes" class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="C5 G5" />
       <label for="hasNoGaps">No gaps</label>
       <input type="checkbox" id="hasNoGaps" name="hasNoGaps" v-model="validateNoGaps" class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="C5 G5" />
       <label for="hasNoGaps">Discard impossible stretches</label>
