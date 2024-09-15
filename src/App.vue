@@ -4,8 +4,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-    <h1 class="text-6xl text text-center p-8 font-extrabold text-white bg-red-700">String tools</h1>
+    <h1 class="text-5xl text text-center p-8 font-extrabold text-white bg-red-700">String tools</h1>
 
     <div class="wrapper">
       <nav>

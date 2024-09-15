@@ -3,6 +3,7 @@ import StopsDiagram from '@/components/StopsDiagram.vue'
 import {computed, ref} from "vue";
 import {instruments} from "@/data/instruments";
 import {calculateFingerings, hasNoGaps, hasPossibleStretch, noteNumber} from "@/data/fingerings";
+import Score from "@/components/Score.vue";
 
 const selectedInstrument = ref(0)
 const options = ref(instruments.map((instrument, i) => ({ text: instrument.name, value: i })))
@@ -18,13 +19,13 @@ const computedNotes = computed(() => {
         console.log(`${r2.noteName} is invalid: ${r2.noteNumber}`)
       }
 
-      return null
+      return []
     }
   }
 
   if (noteNumbers.length < 2) {
     console.log("I need at least two notes")
-    return null
+    return []
   }
 
   return noteNumbers.map(r => r.noteNumber).filter(f => typeof f === 'number')
@@ -63,7 +64,7 @@ const fingerings = computed(() => {
       <input type="checkbox" id="hasNoGaps" name="hasNoGaps" v-model="validateNoGaps" class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="C5 G5" />
       <label for="hasNoGaps">Discard impossible stretches</label>
       <input type="checkbox" id="hasPossibleStretch" name="hasPossibleStretch" v-model="validatePossibleStretch" class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="C5 G5" />
-      <div id="score"></div>
+      <Score :notes="computedNotes" :instrument-index="selectedInstrument" />
       <div id="description"></div>
       <div>{{ computedNotes }}</div>
     </div>

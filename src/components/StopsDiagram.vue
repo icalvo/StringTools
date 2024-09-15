@@ -4,15 +4,10 @@ import {type Instrument, instruments, type InstrumentString} from '@/data/instru
 import type {Stop} from "@/data/types";
 import {getStopRelPos} from "@/data/fingerings";
 
-const props = withDefaults(
-  defineProps<{
-    fingerings: Array<Array<Stop>> | null,
-    instrumentIndex: number
-  }>(),
-  {
-    
-  }
-)
+const props = defineProps<{
+  fingerings: Array<Array<Stop>> | null,
+  instrumentIndex: number
+}>()
 
 const canvas = useTemplateRef<HTMLCanvasElement>('my-canvas')
 let ctx: CanvasRenderingContext2D
