@@ -24,6 +24,15 @@ function abcnote(noteNumber: number): string {
 }
 
 function showScore(target: HTMLElement, notes: number[], instrument: Instrument) {
+  const lowestNote = instrument.strings.reduce((prev, curr) => Math.min(prev, curr.openNote), 1000)
+  const highestNote = instrument.strings.reduce(
+    (prev, curr) => Math.max(prev, curr.openNote + instrument.stops),
+    0
+  )
+  if (notes.some((note) => note < lowestNote || note > highestNote)) {
+    notes = []
+  }
+
   const abcnotes = notes.map((n) => `${abcnote(n)}2`).join('')
   const score = `X:1/4\nK:C ${instrument.clef}\n[${abcnotes}]`
   const visualOptions = {
@@ -49,5 +58,3 @@ watch(() => props.instrumentIndex, show)
 <template>
   <div ref="score"></div>
 </template>
-
-<style scoped></style>
