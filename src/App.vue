@@ -3,7 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-  <header class="text-white bg-red-700">
+  <header class="flex flex-col items-center justify-center text-white bg-red-700">
     <h1 class="text-5xl text p-8 font-extrabold">String tools</h1>
 
     <div class="wrapper">

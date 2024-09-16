@@ -23,47 +23,50 @@ const fingerings = computed(() => {
 </script>
 
 <template>
-  <h2 class="text-3xl">String Stops</h2>
-  <div class="flex flex-row p-4 border-2 border-red-500">
-    <div class="flex-grow">
-      <label for="instrument">Instrument</label>
-      <InstrumentSelector
-        id="instrument"
-        name="instrument"
-        v-model="selectedInstrument"
-        class="border-2 py-1.5 pl-1"
-      />
-      <label for="notes">Notes</label>
-      <NoteInput
-        id="notes"
-        name="notes"
-        v-model="parsedNotes"
-        class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-        placeholder="C5 G5"
-      />
-      <label for="hasNoGaps">No gaps</label>
-      <input
-        type="checkbox"
-        id="hasNoGaps"
-        name="hasNoGaps"
-        v-model="validateNoGaps"
-        class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-        placeholder="C5 G5"
-      />
-      <label for="hasNoGaps">Discard impossible stretches</label>
-      <input
-        type="checkbox"
-        id="hasPossibleStretch"
-        name="hasPossibleStretch"
-        v-model="validatePossibleStretch"
-        class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-        placeholder="C5 G5"
-      />
-      <ScoreDisplay :notes="parsedNotes" :instrument-index="selectedInstrument" />
-      <FingeringsDescription :fingerings="fingerings" :instrument="instrument" />
-      <div id="description"></div>
+  <div>
+    <h2 class="text-3xl">String Stops</h2>
+    <div class="flex flex-row">
+      <div class="w-5/12 flex flex-row p-4 border-2 border-red-500">
+        <div class="flex-grow">
+          <label for="instrument">Instrument</label>
+          <InstrumentSelector
+            id="instrument"
+            name="instrument"
+            v-model="selectedInstrument"
+            class="border-2 py-1.5 pl-1"
+          />
+          <label for="notes" class="px-1">Notes</label>
+          <NoteInput
+            id="notes"
+            name="notes"
+            v-model="parsedNotes"
+            class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+            placeholder="C5 G5"
+          />
+          <label for="hasNoGaps" class="px-1">No gaps</label>
+          <input
+            type="checkbox"
+            id="hasNoGaps"
+            name="hasNoGaps"
+            v-model="validateNoGaps"
+            class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+            placeholder="C5 G5"
+          />
+          <label for="hasNoGaps" class="px-1">Discard impossible stretches</label>
+          <input
+            type="checkbox"
+            id="hasPossibleStretch"
+            name="hasPossibleStretch"
+            v-model="validatePossibleStretch"
+            class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+            placeholder="C5 G5"
+          />
+          <ScoreDisplay :notes="parsedNotes" :instrument-index="selectedInstrument" />
+          <FingeringsDescription :fingerings="fingerings" :instrument="instrument" />
+          <div id="description"></div>
+        </div>
+      </div>
+      <StopsDiagram :fingerings="fingerings" :instrument-index="selectedInstrument" />
     </div>
   </div>
-
-  <StopsDiagram :fingerings="fingerings" :instrument-index="selectedInstrument" />
 </template>
