@@ -16,6 +16,6 @@ describe('StopsDiagram', () => {
         ]
       }
     })
-    expect(wrapper.html()).toContain('canvas')
+    expect(wrapper.html()).toContain('circle')
   })
 })

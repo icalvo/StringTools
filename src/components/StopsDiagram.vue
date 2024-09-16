@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useTemplateRef, onMounted, watch } from 'vue'
-import { type Instrument, instruments, type InstrumentString } from '@/data/instruments'
+import { computed } from 'vue'
+import { instruments, type InstrumentString } from '@/data/instruments'
 import type { Stop } from '@/data/types'
 import { getStopRelPos } from '@/data/fingerings'
 import { fingeringColor } from '@/data/presentation'
@@ -10,164 +10,101 @@ const props = defineProps<{
   instrumentIndex: number
 }>()
 
-const canvas = useTemplateRef<HTMLCanvasElement>('my-canvas')
-let ctx: CanvasRenderingContext2D
-
-async function loadImage(src: string) {
-  const img = new Image()
-  const promise = new Promise<void>(function (resolve) {
-    img.addEventListener('load', () => {
-      ctx.drawImage(img, 0, 0)
-      resolve()
+const instrument = computed(() => instruments[props.instrumentIndex])
+const stops = computed(() =>
+  props.fingerings.flatMap((fingering, fingeringIndex) => {
+    const hardFingering = fingering.some((stop) => ('hard' in stop ? stop.hard : false))
+    return fingering.map((s) => {
+      const stopPos = getStopRelPos(s.stopIndex)
+      const stopAbsPos = getStopAbsPos(instrument.value.strings[s.stringIndex], stopPos)
+      return {
+        x: stopAbsPos.x,
+        y: stopAbsPos.y,
+        r: hardFingering ? 4 : 8,
+        color: fingeringColor(fingeringIndex),
+        isOpen: s.stopIndex === 0
+      }
     })
   })
-  img.src = src
-  return promise
-}
+)
+const strings = computed(() =>
+  instrument.value.strings.map((string) => ({
+    sx: string.startPositionInImage[0],
+    sy: string.startPositionInImage[1],
+    ex: string.endPositionInImage[0],
+    ey: string.endPositionInImage[1]
+  }))
+)
 
-function circle(x: number, y: number, r: number, color: string) {
-  ctx.beginPath()
-  ctx.arc(x, y, r, 0, Math.PI * 2)
-  ctx.fillStyle = color
-  ctx.fill()
-  ctx.strokeStyle = 'black'
-  ctx.stroke()
-}
-
-function circumference(x: number, y: number, r: number, color: string) {
-  ctx.beginPath()
-  ctx.lineWidth = 2
-  ctx.arc(x, y, r, 0, Math.PI * 2)
-  ctx.strokeStyle = color
-  ctx.stroke()
-}
-
-function drawStrings(instrument: Instrument) {
-  for (const string of instrument.strings) {
-    ctx.beginPath()
-    ctx.moveTo(string.startPositionInImage[0], string.startPositionInImage[1])
-    ctx.lineTo(string.endPositionInImage[0], string.endPositionInImage[1])
-    ctx.strokeStyle = 'rgb(0 100 200)'
-    ctx.stroke()
-    for (let stopIndex = 0; stopIndex <= instrument.stops; stopIndex++) {
+const allStops = computed(() =>
+  strings.value.flatMap((string) =>
+    [...Array(instrument.value.stops + 1).keys()].map((stopIndex) => {
       const stopRelPos = getStopRelPos(stopIndex)
-      const stopAbsPos = getStopAbsPos(string, stopRelPos)
-      const x = stopAbsPos[0]
-      const y = stopAbsPos[1]
-      ctx.beginPath()
-      ctx.arc(x, y, 3, 0, Math.PI * 2)
-      ctx.fillStyle = 'white'
-      ctx.fill()
-      ctx.strokeStyle = 'black'
-      ctx.stroke()
-    }
-  }
-}
-
-function getStopAbsPos(string: InstrumentString, stopRelPos: number): number[] {
+      const stopX = string.sx + (string.ex - string.sx) * stopRelPos
+      const stopY = string.sy + (string.ey - string.sy) * stopRelPos
+      return { x: stopX, y: stopY }
+    })
+  )
+)
+function getStopAbsPos(string: InstrumentString, stopRelPos: number) {
   const stringStartX = string.startPositionInImage[0]
   const stringStartY = string.startPositionInImage[1]
   const stringEndX = string.endPositionInImage[0]
   const stringEndY = string.endPositionInImage[1]
   const stopX = stringStartX + (stringEndX - stringStartX) * stopRelPos
   const stopY = stringStartY + (stringEndY - stringStartY) * stopRelPos
-  return [stopX, stopY]
+  return { x: stopX, y: stopY }
 }
-
-function drawStop(
-  instrument: Instrument,
-  stringIndex: number,
-  stopPos: number,
-  fingeringIndex: number,
-  hard: boolean
-) {
-  const stopAbsPos = getStopAbsPos(instrument.strings[stringIndex], stopPos)
-  const stopX = stopAbsPos[0]
-  const stopY = stopAbsPos[1]
-  const color = fingeringColor(fingeringIndex)
-  console.debug(
-    `Fingering ${fingeringIndex + 1} at (${stopX}, ${stopY}), ${color}, stopPos ${stopPos}`
-  )
-  const r = hard ? 4 : 8
-  if (stopPos === 0) {
-    circumference(stopX, stopY, r, color)
-  } else {
-    circle(stopX, stopY, r, color)
-  }
-}
-
-// function groupBy<T>(array: T[], predicate: (value: T, index: number, array: T[]) => string) {
-//   return array.reduce(
-//     (acc, value, index, array) => {
-//       ;(acc[predicate(value, index, array)] ||= []).push(value)
-//       return acc
-//     },
-//     {} as { [key: string]: T[] }
-//   )
-// }
-
-function drawFingerings(instrument: Instrument, fingerings: Stop[][]) {
-  // const x = fingerings.flatMap((fingering, fingeringIndex) => {
-  //   const hardFingering = fingering.some((stop) => ('hard' in stop ? stop.hard : false))
-  //   return fingering.map((s) => {
-  //     const r: [Stop, number, boolean] = [s, fingeringIndex, hardFingering]
-  //     return r
-  //   })
-  // })
-  //const y = groupBy(x, ([s, _, __]) => `${s.stopIndex} ${s.stringIndex}`);
-
-  for (let fingeringIndex = 0; fingeringIndex < fingerings.length; fingeringIndex++) {
-    const fingering = fingerings[fingeringIndex]
-    const hardFingering = fingering.some((stop) => ('hard' in stop ? stop.hard : false))
-    fingering.forEach((stop) => {
-      drawStop(
-        instrument,
-        stop.stringIndex,
-        getStopRelPos(stop.stopIndex),
-        fingeringIndex,
-        hardFingering
-      )
-    })
-  }
-}
-
-async function drawInstrument(instrument: Instrument) {
-  await loadImage(instrument.image)
-  drawStrings(instrument)
-}
-async function drawAll() {
-  ctx = canvas.value?.getContext('2d')!
-  const instrument = instruments[props.instrumentIndex]
-  const fingerings = props.fingerings
-
-  await drawInstrument(instrument)
-
-  drawFingerings(instrument, fingerings)
-}
-
-watch(
-  () => props.fingerings,
-  () => {
-    drawAll()
-  }
-)
-
-watch(
-  () => props.instrumentIndex,
-  () => {
-    drawAll()
-  }
-)
-
-onMounted(() => drawAll())
 </script>
 
 <template>
-  <canvas ref="my-canvas" width="600" height="1018"></canvas>
+  <svg viewBox="0 0 600 1018" :style="{ backgroundImage: `url(${instrument.image})` }">
+    <line
+      v-for="(c, idx) in strings"
+      :key="idx"
+      :x1="c.sx"
+      :y1="c.sy"
+      :x2="c.ex"
+      :y2="c.ey"
+      stroke="blue"
+    />
+    <circle
+      v-for="(c, idx) in allStops"
+      :key="idx"
+      :cx="c.x"
+      :cy="c.y"
+      :r="3"
+      stroke="black"
+      stroke-width="2"
+      fill="white"
+    />
+    <circle
+      v-for="(c, idx) in stops.filter((x) => !x.isOpen)"
+      :key="idx"
+      :cx="c.x"
+      :cy="c.y"
+      :r="c.r"
+      stroke="black"
+      stroke-width="2"
+      :fill="c.color"
+    />
+    <circle
+      v-for="(c, idx) in stops.filter((x) => x.isOpen)"
+      :key="idx"
+      :cx="c.x"
+      :cy="c.y"
+      :r="c.r"
+      :stroke="c.color"
+      stroke-width="2"
+      fill-opacity="0"
+    />
+  </svg>
 </template>
 
 <style scoped>
-canvas {
-  border: 1px solid red;
+svg {
+  background-clip: border-box;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 </style>
