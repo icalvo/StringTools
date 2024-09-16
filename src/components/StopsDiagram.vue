@@ -3,6 +3,7 @@ import { useTemplateRef, onMounted, watch } from 'vue'
 import { type Instrument, instruments, type InstrumentString } from '@/data/instruments'
 import type { Stop } from '@/data/types'
 import { getStopRelPos } from '@/data/fingerings'
+import { fingeringColor } from '@/data/presentation'
 
 const props = defineProps<{
   fingerings: Array<Array<Stop>>
@@ -24,20 +25,20 @@ async function loadImage(src: string) {
   return promise
 }
 
-function circle(x: number, y: number, r: number, hue: number) {
+function circle(x: number, y: number, r: number, color: string) {
   ctx.beginPath()
   ctx.arc(x, y, r, 0, Math.PI * 2)
-  ctx.fillStyle = `hsl(${hue} 100% 50%)`
+  ctx.fillStyle = color
   ctx.fill()
   ctx.strokeStyle = 'black'
   ctx.stroke()
 }
 
-function circumference(x: number, y: number, r: number, hue: number) {
+function circumference(x: number, y: number, r: number, color: string) {
   ctx.beginPath()
   ctx.lineWidth = 2
   ctx.arc(x, y, r, 0, Math.PI * 2)
-  ctx.strokeStyle = `hsl(${hue} 100% 50%)`
+  ctx.strokeStyle = color
   ctx.stroke()
 }
 
@@ -83,15 +84,15 @@ function drawStop(
   const stopAbsPos = getStopAbsPos(instrument.strings[stringIndex], stopPos)
   const stopX = stopAbsPos[0]
   const stopY = stopAbsPos[1]
-  const hue = fingeringIndex * 40
+  const color = fingeringColor(fingeringIndex)
   console.debug(
-    `Fingering ${fingeringIndex + 1} at (${stopX}, ${stopY}), hue ${hue}, stopPos ${stopPos}`
+    `Fingering ${fingeringIndex + 1} at (${stopX}, ${stopY}), ${color}, stopPos ${stopPos}`
   )
   const r = hard ? 4 : 8
   if (stopPos === 0) {
-    circumference(stopX, stopY, r, hue)
+    circumference(stopX, stopY, r, color)
   } else {
-    circle(stopX, stopY, r, hue)
+    circle(stopX, stopY, r, color)
   }
 }
 

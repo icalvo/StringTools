@@ -2,6 +2,7 @@
 import type { Stop } from '@/data/types'
 import type { Instrument } from '@/data/instruments'
 import { computed } from 'vue'
+import { fingeringColor } from '@/data/presentation'
 
 const props = defineProps<{
   fingerings: Stop[][]
@@ -10,6 +11,7 @@ const props = defineProps<{
 
 const data = computed(() =>
   props.fingerings.map((fingering, fingeringIndex) => ({
+    color: fingeringColor(fingeringIndex),
     fingeringNumber: fingeringIndex + 1,
     stops: fingering.map((stop) => ({
       stringName: props.instrument.strings[stop.stringIndex].name,
@@ -22,7 +24,7 @@ const data = computed(() =>
 
 <template>
   <div v-for="(f, index) in data" :key="index">
-    <h2 class="text-xl">Fingering {{ f.fingeringNumber }}</h2>
+    <h2 class="text-xl" :style="{ backgroundColor: f.color }">Fingering {{ f.fingeringNumber }}</h2>
     <ul class="p-4">
       <li v-for="(s, index) in f.stops" :key="index" class="list-disc">
         {{ s.stringName }} {{ s.stopDesc }} {{ s.stretch }}
