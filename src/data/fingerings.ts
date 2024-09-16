@@ -1,5 +1,12 @@
 ﻿import type { Instrument } from '@/data/instruments'
 
+export interface Stop {
+  stringIndex: number
+  noteNumber: number
+  stopIndex: number
+  naturalHarmonic: boolean
+}
+
 export function noteNumber(noteName: string): number | string {
   if (noteName == null) return 'Null note name'
   noteName = noteName.trim().toUpperCase()
@@ -35,45 +42,67 @@ export function noteName(noteNumber: number): string {
   return noteName + octave
 }
 
-function calculateStop(
+function* stopsForString(
   instrument: Instrument,
   stringIndex: number,
-  noteNumber: number
-): Stop | null {
+  noteNumber: number,
+  includeNaturalHarmonics: boolean
+) {
   console.debug(`Calculating stop for note ${noteNumber} on string ${stringIndex}`)
-  const openNote = instrument.strings[stringIndex].openNote as number
+  const instrumentString = instrument.strings[stringIndex]
+  const openNote = instrumentString.openNote as number
   const stopIndex = noteNumber - openNote
 
   if (stopIndex < 0) {
-    console.debug(
-      `${noteName(noteNumber)} is too low for ${instrument.strings[stringIndex].name} string`
-    )
-    return null
+    console.debug(`${noteName(noteNumber)} is too low for ${instrumentString.name} string`)
+    return
   }
 
   if (stopIndex > instrument.stops) {
-    console.debug(
-      `${noteName(noteNumber)} is too high for ${instrument.strings[stringIndex].name} string`
-    )
-    return null
+    console.debug(`${noteName(noteNumber)} is too high for ${instrumentString.name} string`)
+    return
   }
 
-  return { stringIndex, noteNumber, stopIndex }
+  yield { stringIndex, noteNumber, stopIndex, naturalHarmonic: false }
+
+  if (includeNaturalHarmonics) {
+    const naturalHarmonics = [
+      { partial: 2, touch: 12, produces: 12 },
+      { partial: 3, touch: 7, produces: 12 + 7 },
+      { partial: 3, touch: 12 + 7, produces: 12 + 7 },
+      { partial: 4, touch: 5, produces: 12 + 7 + 5 },
+      { partial: 4, touch: 12 + 7 + 5, produces: 12 + 7 + 5 },
+      { partial: 5, touch: 4, produces: 12 + 7 + 5 + 4 },
+      { partial: 5, touch: 12 + 4, produces: 12 + 7 + 5 + 4 },
+      { partial: 5, touch: 12 + 7 + 5 + 4, produces: 12 + 7 + 5 + 4 }
+    ]
+
+    yield* naturalHarmonics
+      .map((h) => ({
+        stringIndex,
+        stopIndex: h.touch,
+        noteNumber: h.produces + openNote,
+        naturalHarmonic: true
+      }))
+      .filter((h) => h.noteNumber === noteNumber)
+  }
 }
 
 export function getStopRelPos(stopIndex: number): number {
   return 1 - Math.pow(2, -stopIndex / 12)
 }
 
-export interface Stop {
-  stringIndex: number
-  noteNumber: number
-  stopIndex: number
-}
-
-function stops(instrument: Instrument, notes: number[]): Stop[][] {
+function stopsForInstrument(
+  instrument: Instrument,
+  notes: number[],
+  includeNaturalHarmonics: boolean
+): Stop[][] {
   const result: Stop[][] = notes.map((note) =>
-    instrument.strings.map((_s, i) => calculateStop(instrument, i, note)).filter((f) => f !== null)
+    instrument.strings
+      .flatMap((_s, stringIndex) => [
+        ...stopsForString(instrument, stringIndex, note, includeNaturalHarmonics)
+      ])
+      .filter((f) => f !== null)
   )
 
   if (result.some((r) => r.length === 0)) {
@@ -171,11 +200,23 @@ export function hasPossibleStretch(instrument: Instrument, fingering: Stop[]): b
 export function calculateFingerings(
   instrument: Instrument,
   notes: number[],
-  validations: Function[]
+  validations: Function[],
+  includeNaturalHarmonics: boolean = false
 ): Stop[][] {
   console.debug(`Calculating fingerings for ${notes} on ${instrument.name}`)
-  const stopsByNote = stops(instrument, notes)
+
+  const stopsByNote = stopsForInstrument(instrument, notes, includeNaturalHarmonics)
   console.debug('Stops:', stopsByNote)
+
+  if (notes.length === 1) {
+    if (stopsByNote.length === 0) return []
+    return stopsByNote[0].map((f) => [f])
+  }
+
+  const init: Stop[][] = []
+  return stopsByNote
+    .reduce((acc, stops) => cross(stringIsNotRepeated, acc, stops), init)
+    .filter(validation)
 
   function stringIsNotRepeated(stopList: Stop[], stop: Stop): boolean {
     return stopList.every((existingStop) => existingStop.stringIndex !== stop.stringIndex)
@@ -184,9 +225,4 @@ export function calculateFingerings(
   function validation(fng: Stop[]): boolean {
     return validations.map((val) => val(instrument, fng)).every((result) => result)
   }
-
-  const init: Stop[][] = []
-  return stopsByNote
-    .reduce((acc, stops) => cross(stringIsNotRepeated, acc, stops), init)
-    .filter(validation)
 }
