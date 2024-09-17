@@ -23,13 +23,10 @@ const fingerings = computed(() => {
 </script>
 
 <template>
-  <div class="flex-auto flex flex-col">
-    <h2 class="text-3xl">String Stops</h2>
-    <div
-      class="flex-auto border-2 border-amber-500"
-      style="display: grid; grid-template-columns: 1fr 2fr"
-    >
-      <div class="flex flex-col p-4 border-2 border-red-500 text-wrap">
+  <div class="flex flex-col h-full">
+    <h2 class="flex-initial text-3xl">String Stops</h2>
+    <div class="flex-auto basis-96 flex flex-row overflow-hidden">
+      <div class="flex-initial basis-1/2 flex flex-col p-4 text-wrap">
         <div>
           <label for="instrument">Instrument</label>
           <InstrumentSelector
@@ -68,10 +65,9 @@ const fingerings = computed(() => {
         <ScoreDisplay :notes="parsedNotes" :instrument-index="selectedInstrument" />
         <FingeringsDescription :fingerings="fingerings" :instrument="instrument" />
       </div>
-      <div class="border-2 border-blue-400">
+      <div class="flex-auto">
         <StopsDiagram
-          class="border-2 border-green-400"
-          style="max-height: 60vh"
+          class="max-h-full mx-auto"
           :fingerings="fingerings"
           :instrument-index="selectedInstrument"
         />

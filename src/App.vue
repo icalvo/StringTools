@@ -4,8 +4,8 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <div class="flex flex-col h-full">
-    <header class="flex-initial text-white bg-red-700 flex flex-col items-center justify-center">
-      <h1 class="text-5xl text p-8 font-extrabold">String tools</h1>
+    <header class="flex-initial text-white bg-red-700 flex flex-row items-end justify-between">
+      <h1 class="text-5xl text font-extrabold p-8">String tools</h1>
 
       <div class="wrapper">
         <nav>
@@ -16,7 +16,7 @@ import { RouterLink, RouterView } from 'vue-router'
       </div>
     </header>
 
-    <div class="flex flex-col p-4 flex-auto">
+    <div class="flex-auto px-4 pt-4">
       <RouterView />
     </div>
   </div>
