@@ -40,7 +40,7 @@ onMounted(() => (representation.value = notesToRepr.value))
 </script>
 
 <template>
-  <input type="text" v-model="representation" />
+  <input v-model="representation" type="text" />
 </template>
 
 <style scoped></style>

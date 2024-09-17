@@ -31,33 +31,33 @@ const fingerings = computed(() => {
           <label for="instrument">Instrument</label>
           <InstrumentSelector
             id="instrument"
-            name="instrument"
             v-model="selectedInstrument"
+            name="instrument"
             class="border-2 py-1.5 pl-1"
           />
           <label for="notes" class="px-1">Notes</label>
           <NoteInput
             id="notes"
-            name="notes"
             v-model="parsedNotes"
+            name="notes"
             class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
             placeholder="C5 G5"
           />
           <label for="hasNoGaps" class="px-1">No gaps</label>
           <input
-            type="checkbox"
             id="hasNoGaps"
-            name="hasNoGaps"
             v-model="validateNoGaps"
+            type="checkbox"
+            name="hasNoGaps"
             class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
             placeholder="C5 G5"
           />
           <label for="hasNoGaps" class="px-1">Discard impossible stretches</label>
           <input
-            type="checkbox"
             id="hasPossibleStretch"
-            name="hasPossibleStretch"
             v-model="validatePossibleStretch"
+            type="checkbox"
+            name="hasPossibleStretch"
             class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
             placeholder="C5 G5"
           />

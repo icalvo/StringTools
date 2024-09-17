@@ -1,3 +1,4 @@
 <template>
-  <main>Welcome to the string tools page!</main>
+  <p>Welcome to the String Tools page!</p>
+  <p>Please click on a tool in the navigation to learn how to use it.</p>
 </template>
