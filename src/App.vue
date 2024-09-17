@@ -3,20 +3,22 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-  <header class="flex flex-col items-center justify-center text-white bg-red-700">
-    <h1 class="text-5xl text p-8 font-extrabold">String tools</h1>
+  <div class="flex flex-col h-full">
+    <header class="flex-initial text-white bg-red-700 flex flex-col items-center justify-center">
+      <h1 class="text-5xl text p-8 font-extrabold">String tools</h1>
 
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/" class="inline-block p-2">Home</RouterLink>
-        <RouterLink to="/stringstops" class="inline-block p-2">String stops</RouterLink>
-        <RouterLink to="/about" class="inline-block p-2">About</RouterLink>
-      </nav>
+      <div class="wrapper">
+        <nav>
+          <RouterLink to="/" class="inline-block p-2">Home</RouterLink>
+          <RouterLink to="/stringstops" class="inline-block p-2">String stops</RouterLink>
+          <RouterLink to="/about" class="inline-block p-2">About</RouterLink>
+        </nav>
+      </div>
+    </header>
+
+    <div class="flex flex-col p-4 flex-auto">
+      <RouterView />
     </div>
-  </header>
-
-  <div class="p-4">
-    <RouterView />
   </div>
 </template>
 <style lang="postcss" scoped>

@@ -23,11 +23,14 @@ const fingerings = computed(() => {
 </script>
 
 <template>
-  <div>
+  <div class="flex-auto flex flex-col">
     <h2 class="text-3xl">String Stops</h2>
-    <div class="flex flex-row">
-      <div class="w-5/12 flex flex-row p-4 border-2 border-red-500">
-        <div class="flex-grow">
+    <div
+      class="flex-auto border-2 border-amber-500"
+      style="display: grid; grid-template-columns: 1fr 2fr"
+    >
+      <div class="flex flex-col p-4 border-2 border-red-500 text-wrap">
+        <div>
           <label for="instrument">Instrument</label>
           <InstrumentSelector
             id="instrument"
@@ -61,12 +64,18 @@ const fingerings = computed(() => {
             class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
             placeholder="C5 G5"
           />
-          <ScoreDisplay :notes="parsedNotes" :instrument-index="selectedInstrument" />
-          <FingeringsDescription :fingerings="fingerings" :instrument="instrument" />
-          <div id="description"></div>
         </div>
+        <ScoreDisplay :notes="parsedNotes" :instrument-index="selectedInstrument" />
+        <FingeringsDescription :fingerings="fingerings" :instrument="instrument" />
       </div>
-      <StopsDiagram :fingerings="fingerings" :instrument-index="selectedInstrument" />
+      <div class="border-2 border-blue-400">
+        <StopsDiagram
+          class="border-2 border-green-400"
+          style="max-height: 60vh"
+          :fingerings="fingerings"
+          :instrument-index="selectedInstrument"
+        />
+      </div>
     </div>
   </div>
 </template>

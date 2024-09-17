@@ -104,7 +104,9 @@ function getStopAbsPos(string: InstrumentString, stopRelPos: number) {
 <style scoped>
 svg {
   background-clip: border-box;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
+  background-position: center;
+  background-position-y: center;
 }
 </style>
