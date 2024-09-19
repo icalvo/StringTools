@@ -1,11 +1,5 @@
 ﻿import type { Instrument } from '@/data/instruments'
-
-export interface Stop {
-  stringIndex: number
-  noteNumber: number
-  stopIndex: number
-  naturalHarmonic: boolean
-}
+import type {Stop} from "@/data/types";
 
 export function noteNumber(noteName: string): number | string {
   if (noteName == null) return 'Null note name'
@@ -142,7 +136,6 @@ function fingeringStretches(instrument: Instrument, stops: Stop[]): [Stop, numbe
     .map(([stop1, stop2]) => [stop1, fingeringStretch(instrument, stop1, stop2), stop2])
 }
 
-// let isOpenString stop = stop = 0
 function isOpenString(stop: Stop): boolean {
   return stop.stopIndex === 0
 }
@@ -174,11 +167,6 @@ function stretchesHardness(instrument: Instrument, stretches: [Stop, number, Sto
     .reduce((a, b) => Math.max(a, b))
 }
 
-// let fingeringHardness instrument fingering =
-//     fingering
-//     |> List.sortBy (fun (str, _, _) -> str)
-//     |> fingeringStretches instrument
-//     |> stretchesHardness instrument
 function fingeringHardness(instrument: Instrument, fingering: Stop[]): number {
   const sortedFingering = fingering.sort((s1, s2) => s1.stringIndex - s2.stringIndex)
 

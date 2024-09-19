@@ -1,25 +1,30 @@
 <script setup lang="ts">
 import StopsDiagram from '@/components/StopsDiagram.vue'
-import { computed, ref } from 'vue'
+import {computed, ref, watch} from 'vue'
 import { instruments } from '@/data/instruments'
 import { calculateFingerings, hasNoGaps, hasPossibleStretch } from '@/data/fingerings'
 import ScoreDisplay from '@/components/ScoreDisplay.vue'
 import NoteInput from '@/components/NotesInput.vue'
 import InstrumentSelector from '@/components/InstrumentSelector.vue'
 import FingeringsDescription from '@/components/FingeringsDescription.vue'
+import {useFingeringStore} from "@/stores/fingerings";
+
+const fingeringsStore = useFingeringStore()
 
 const selectedInstrument = ref(0)
-const parsedNotes = ref([43, 50])
+const parsedNotes = ref([55, 62])
 const validateNoGaps = ref(true)
 const validatePossibleStretch = ref(true)
 const instrument = computed(() => instruments[selectedInstrument.value])
-const fingerings = computed(() => {
-  const notes = parsedNotes.value
+
+
+watch(parsedNotes, notes => {
   const validations = []
   if (validateNoGaps.value) validations.push(hasNoGaps)
   if (validatePossibleStretch.value) validations.push(hasPossibleStretch)
-  return calculateFingerings(instrument.value, notes, validations)
+  fingeringsStore.loadFingerings(calculateFingerings(instrument.value, notes, validations, false))
 })
+
 </script>
 
 <template>
@@ -37,7 +42,6 @@ const fingerings = computed(() => {
           />
           <label for="notes" class="px-1">Notes</label>
           <NoteInput
-            id="notes"
             v-model="parsedNotes"
             name="notes"
             class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
@@ -45,30 +49,25 @@ const fingerings = computed(() => {
           />
           <label for="hasNoGaps" class="px-1">No gaps</label>
           <input
-            id="hasNoGaps"
             v-model="validateNoGaps"
             type="checkbox"
             name="hasNoGaps"
             class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-            placeholder="C5 G5"
           />
-          <label for="hasNoGaps" class="px-1">Discard impossible stretches</label>
+          <label for="hasPossibleStretch" class="px-1">Discard impossible stretches</label>
           <input
-            id="hasPossibleStretch"
             v-model="validatePossibleStretch"
             type="checkbox"
             name="hasPossibleStretch"
             class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-            placeholder="C5 G5"
           />
         </div>
         <ScoreDisplay :notes="parsedNotes" :instrument-index="selectedInstrument" />
-        <FingeringsDescription :fingerings="fingerings" :instrument="instrument" />
+        <FingeringsDescription :instrument="instrument" />
       </div>
       <div class="flex-auto">
         <StopsDiagram
           class="max-h-full mx-auto"
-          :fingerings="fingerings"
           :instrument-index="selectedInstrument"
         />
       </div>
