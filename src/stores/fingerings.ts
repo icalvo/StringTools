@@ -13,8 +13,8 @@ export const useFingeringStore = defineStore('fingerings', {
         loadFingerings(newFingerings: Stop[][]) {
             this.fingeringToggles = newFingerings.map(f => ({fingering: f, enabled: true }))
         },
-        toggleFingering(fingeringIndex: number) {
-            this.fingeringToggles[fingeringIndex].enabled = !this.fingeringToggles[fingeringIndex].enabled
+        toggleFingering(fingeringIndex: number, enabled: boolean) {
+            this.fingeringToggles[fingeringIndex].enabled = enabled
         },
     },
 })

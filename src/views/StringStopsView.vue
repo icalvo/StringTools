@@ -15,14 +15,17 @@ const selectedInstrument = ref(0)
 const parsedNotes = ref([55, 62])
 const validateNoGaps = ref(true)
 const validatePossibleStretch = ref(true)
+const includeNaturalHarmonics = ref(false)
 const instrument = computed(() => instruments[selectedInstrument.value])
 
 
-watch(parsedNotes, notes => {
+watch([parsedNotes, validateNoGaps, validatePossibleStretch, includeNaturalHarmonics,selectedInstrument], 
+    ([notes, vng, vps, inh, i]) => {
   const validations = []
-  if (validateNoGaps.value) validations.push(hasNoGaps)
-  if (validatePossibleStretch.value) validations.push(hasPossibleStretch)
-  fingeringsStore.loadFingerings(calculateFingerings(instrument.value, notes, validations, false))
+  if (vng) validations.push(hasNoGaps)
+  if (vps) validations.push(hasPossibleStretch)
+  const newFingerings = calculateFingerings(instrument.value, notes, validations, inh);
+  fingeringsStore.loadFingerings(newFingerings)
 })
 
 </script>
@@ -31,7 +34,7 @@ watch(parsedNotes, notes => {
   <div class="flex flex-col h-full">
     <h2 class="flex-initial text-3xl">String Stops</h2>
     <div class="flex-auto basis-96 flex flex-row overflow-hidden">
-      <div class="flex-initial basis-1/2 flex flex-col p-4 text-wrap">
+      <div class="flex-initial basis-1/2 p-4 text-wrap overflow-y-scroll">
         <div>
           <label for="instrument">Instrument</label>
           <InstrumentSelector
@@ -60,6 +63,13 @@ watch(parsedNotes, notes => {
             type="checkbox"
             name="hasPossibleStretch"
             class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+          />
+          <label for="includeNaturalHarmonics" class="px-1">Natural harmonics</label>
+          <input
+              v-model="includeNaturalHarmonics"
+              type="checkbox"
+              name="includeNaturalHarmonics"
+              class="flex-1 border-2 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
           />
         </div>
         <ScoreDisplay :notes="parsedNotes" :instrument-index="selectedInstrument" />

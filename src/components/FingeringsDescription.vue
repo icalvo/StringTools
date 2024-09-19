@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
-import type { Instrument } from '@/data/instruments'
-import { computed } from 'vue'
-import { fingeringColor } from '@/data/presentation'
+import type {Instrument} from '@/data/instruments'
+import {computed} from 'vue'
+import {fingeringColor} from '@/data/presentation'
 import {useFingeringStore} from "@/stores/fingerings";
 
 const props = defineProps<{
@@ -12,47 +12,63 @@ const fingeringsStore = useFingeringStore()
 
 const data = computed(() =>
     fingeringsStore.fingeringToggles.map((fingeringToggle, fingeringIndex) => ({
-    color: fingeringColor(fingeringIndex),
-    fingeringNumber: fingeringIndex + 1,
-    enabled: fingeringToggle.enabled,
-    stops: fingeringToggle.fingering.map((stop) => ({
-      stringName: props.instrument.strings[stop.stringIndex].name,
-      stopDesc: stop.stopIndex === 0 ? 'open string' : `string at stop ${stop.stopIndex}`,
-      stretch: 'stopPosDiff' in stop ? Math.floor(stop.stopPosDiff as number) + 'mm' : ''
+      color: fingeringColor(fingeringIndex),
+      fingeringNumber: fingeringIndex + 1,
+      enabled: fingeringToggle.enabled,
+      stops: fingeringToggle.fingering.map((stop) => {
+        const stringName = props.instrument.strings[stop.stringIndex].name
+        return ({
+          stringName,
+          stopDesc:
+              stop.stopIndex === 0
+                  ? `Open ${stringName} string`
+                  : stop.naturalHarmonic
+                      ? `Touch ${stringName} string at ${stop.stopIndex} (natural harmonic)`
+                      : `Stop ${stringName} string at ${stop.stopIndex}`,
+          stretch: 'stopPosDiff' in stop ? Math.floor(stop.stopPosDiff as number) + 'mm' : ''
+        });
+      })
     }))
-  }))
 )
 </script>
 
 <template>
+  <div>
   <div v-for="(f, index) in data" :key="index">
     <h2 class="text-xl">
       <span class="checkbox-wrapper-2">
-        <input type="checkbox" :checked="f.enabled" :style="{'--bgColor': f.color}" @input="fingeringsStore.toggleFingering(index)" />
+        <input
+type="checkbox" :checked="f.enabled" :style="{'--bgColor': f.color}"
+               @input="event => fingeringsStore.toggleFingering(index, (event.target as HTMLInputElement).checked)"/>
       </span>
 
       Fingering {{ f.fingeringNumber }}</h2>
     <ul class="p-4">
       <li v-for="(s, index) in f.stops" :key="index" class="list-disc">
-        {{ s.stringName }} {{ s.stopDesc }} {{ s.stretch }}
+        {{ s.stopDesc }} {{ s.stretch }}
       </li>
     </ul>
   </div>
   <div v-if="data.length === 0">No fingerings found.</div>
+  </div>
 </template>
 
 <style scoped>
- .checkbox-wrapper-2 input {
-   appearance: none;
-   background-color: #dfe1e4;
-   border-radius: 72px;
-   border-style: none;
-   flex-shrink: 0;
-   height: 20px;
-   margin: 0;
-   position: relative;
-   width: 30px;
- }
+html {
+  --bgColor: black;
+}
+
+.checkbox-wrapper-2 input {
+  appearance: none;
+  background-color: #dfe1e4;
+  border-radius: 72px;
+  border-style: none;
+  flex-shrink: 0;
+  height: 20px;
+  margin: 0;
+  position: relative;
+  width: 30px;
+}
 
 .checkbox-wrapper-2 input::before {
   bottom: -6px;

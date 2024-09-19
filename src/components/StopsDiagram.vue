@@ -25,7 +25,9 @@ const stops = computed(() =>
           y: stopAbsPos.y,
           r: hardFingering ? 4 : 8,
           color: fingeringColor(fingeringIndex),
-          isOpen: s.stopIndex === 0
+          isOpen: s.stopIndex === 0,
+          isStopped: s.stopIndex !== 0 && !s.naturalHarmonic,
+          isNaturalHarmonic: s.naturalHarmonic
         }
       })
     })
@@ -83,7 +85,7 @@ function getStopAbsPos(string: InstrumentString, stopRelPos: number) {
         fill="white"
     />
     <circle
-        v-for="(c, idx) in stops.filter((x) => !x.isOpen)"
+        v-for="(c, idx) in stops.filter((x) => x.isStopped)"
         :key="idx"
         :cx="c.x"
         :cy="c.y"
@@ -92,6 +94,15 @@ function getStopAbsPos(string: InstrumentString, stopRelPos: number) {
         stroke-width="2"
         :fill="c.color"
     />
+    <polygon
+        v-for="(c, idx) in stops.filter((x) => x.isNaturalHarmonic)"
+        :key="idx"
+        :points="`${c.x-c.r},${c.y} ${c.x},${c.y-c.r} ${c.x+c.r},${c.y} ${c.x},${c.y+c.r}`"
+        stroke="black"
+        stroke-width="2"
+        :fill="c.color"
+    />
+
     <circle
         v-for="(c, idx) in stops.filter((x) => x.isOpen)"
         :key="idx"
@@ -100,7 +111,7 @@ function getStopAbsPos(string: InstrumentString, stopRelPos: number) {
         :r="c.r"
         :stroke="c.color"
         stroke-width="2"
-        fill-opacity="0"
+        fill="none"
     />
   </svg>
 </template>

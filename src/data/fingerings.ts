@@ -53,11 +53,11 @@ function* stopsForString(
   }
 
   if (stopIndex > instrument.stops) {
-    console.debug(`${noteName(noteNumber)} is too high for ${instrumentString.name} string`)
-    return
+    console.debug(`${noteName(noteNumber)} is too high to stop for ${instrumentString.name} string`)
   }
-
-  yield { stringIndex, noteNumber, stopIndex, naturalHarmonic: false }
+  else {
+    yield { stringIndex, noteNumber, stopIndex, naturalHarmonic: false }
+  }
 
   if (includeNaturalHarmonics) {
     const naturalHarmonics = [
