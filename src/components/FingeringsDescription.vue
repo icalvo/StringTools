@@ -30,26 +30,39 @@ const data = computed(() =>
       })
     }))
 )
+
+function toggleAll(enabled: boolean) {
+  [...Array(data.value.length).keys()].forEach(index => 
+    fingeringsStore.toggleFingering(index, enabled))
+}
 </script>
 
 <template>
   <div>
-  <div v-for="(f, index) in data" :key="index">
-    <h2 class="text-xl">
-      <span class="checkbox-wrapper-2">
-        <input
-type="checkbox" :checked="f.enabled" :style="{'--bgColor': f.color}"
-               @input="event => fingeringsStore.toggleFingering(index, (event.target as HTMLInputElement).checked)"/>
-      </span>
-
-      Fingering {{ f.fingeringNumber }}</h2>
-    <ul class="p-4">
-      <li v-for="(s, index) in f.stops" :key="index" class="list-disc">
-        {{ s.stopDesc }} {{ s.stretch }}
-      </li>
-    </ul>
-  </div>
-  <div v-if="data.length === 0">No fingerings found.</div>
+    <span v-if="data.length > 1" class="checkbox-wrapper-2">
+      <input
+          type="checkbox" :checked="true" :style="{'--bgColor': 'gray'}"
+          @input.prevent.stop="event => toggleAll((event.target as HTMLInputElement).checked)"/>
+      All
+    </span>
+    <div v-if="data.length > 0" class="flex flex-row flex-wrap">
+      <div v-for="(f, index) in data" :key="index" class="flex-initial basis-1/5 border-2 border-gray-300 rounded-2xl shadow-md p-2">
+        <h2 class="text-xl">
+          <span class="checkbox-wrapper-2">
+            <input
+    type="checkbox" :checked="f.enabled" :style="{'--bgColor': f.color}"
+                   @input.prevent.stop="event => fingeringsStore.toggleFingering(index, (event.target as HTMLInputElement).checked)"/>
+          </span>
+    
+          Fingering {{ f.fingeringNumber }}</h2>
+        <ul class="p-4">
+          <li v-for="(s, index) in f.stops" :key="index" class="list-disc">
+            {{ s.stopDesc }} {{ s.stretch }}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div v-if="data.length === 0">No fingerings found.</div>
   </div>
 </template>
 
