@@ -24,7 +24,7 @@ const stops = computed(() =>
           x: stopAbsPos.x,
           y: stopAbsPos.y,
           r: hardFingering ? 4 : 8,
-          color: fingeringColor(fingeringIndex),
+          color: fingeringColor(fingeringsStore.fingeringToggles.length, fingeringIndex),
           isOpen: s.stopIndex === 0,
           isStopped: s.stopIndex !== 0 && !s.naturalHarmonic,
           isNaturalHarmonic: s.naturalHarmonic

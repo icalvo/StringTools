@@ -1,3 +1,3 @@
-﻿export function fingeringColor(fingeringIndex: number) {
-  return `hsl(${fingeringIndex * 40} 100% 50%)`
+﻿export function fingeringColor(numberOfFingerings: number, fingeringIndex: number) {
+  return `hsl(${fingeringIndex * 360 / numberOfFingerings} 100% 50%)`
 }

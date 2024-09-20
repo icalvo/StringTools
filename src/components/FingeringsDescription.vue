@@ -12,7 +12,7 @@ const fingeringsStore = useFingeringStore()
 
 const data = computed(() =>
     fingeringsStore.fingeringToggles.map((fingeringToggle, fingeringIndex) => ({
-      color: fingeringColor(fingeringIndex),
+      color: fingeringColor(fingeringsStore.fingeringToggles.length, fingeringIndex),
       fingeringNumber: fingeringIndex + 1,
       enabled: fingeringToggle.enabled,
       stops: fingeringToggle.fingering.map((stop) => {
