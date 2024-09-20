@@ -22,8 +22,6 @@ import { RouterLink, RouterView } from 'vue-router'
   </div>
 </template>
 <style lang="postcss" scoped>
-nav {
-}
 
 nav .router-link-active {
   @apply text-black bg-white rounded-t-md;
