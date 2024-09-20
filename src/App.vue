@@ -5,7 +5,7 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
   <div class="flex flex-col h-full">
     <header class="flex-initial text-white bg-red-700 flex flex-row items-end justify-between">
-      <h1 class="text-5xl text font-extrabold p-8">String tools</h1>
+      <h1 class="text-5xl text font-extrabold p-3">String tools</h1>
 
       <div class="wrapper">
         <nav>
@@ -22,6 +22,9 @@ import { RouterLink, RouterView } from 'vue-router'
   </div>
 </template>
 <style lang="postcss" scoped>
+nav {
+}
+
 nav .router-link-active {
   @apply text-black bg-white rounded-t-md;
 }

@@ -56,7 +56,7 @@ function toggleAll(enabled: boolean) {
     
           Fingering {{ f.fingeringNumber }}</h2>
         <ul class="p-4">
-          <li v-for="(s, index) in f.stops" :key="index" class="list-disc">
+          <li v-for="(s, sindex) in f.stops" :key="sindex" class="list-disc">
             {{ s.stopDesc }} {{ s.stretch }}
           </li>
         </ul>

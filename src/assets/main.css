@@ -1,1 +1,9 @@
 @import './base.css';
+
+.paragraph {
+    @apply pb-2
+}
+
+.view-title {
+    @apply text-3xl pb-5
+}

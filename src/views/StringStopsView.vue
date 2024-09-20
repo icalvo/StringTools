@@ -18,9 +18,8 @@ const validatePossibleStretch = ref(true)
 const includeNaturalHarmonics = ref(false)
 const instrument = computed(() => instruments[selectedInstrument.value])
 
-
 watch([parsedNotes, validateNoGaps, validatePossibleStretch, includeNaturalHarmonics,selectedInstrument], 
-    ([notes, vng, vps, inh, i]) => {
+    ([notes, vng, vps, inh]) => {
   const validations = []
   if (vng) validations.push(hasNoGaps)
   if (vps) validations.push(hasPossibleStretch)
@@ -32,9 +31,9 @@ watch([parsedNotes, validateNoGaps, validatePossibleStretch, includeNaturalHarmo
 
 <template>
   <div class="flex flex-col h-full">
-    <h2 class="flex-initial text-3xl">String Stops</h2>
     <div class="flex-auto basis-96 flex flex-row overflow-hidden">
-      <div class="flex-initial basis-1/2 p-4 text-wrap overflow-y-scroll">
+      <div class="flex-initial basis-1/2 p-4 text-wrap overflow-y-auto">
+        <h2 class="view-title">String Stops</h2>
         <div>
           <label for="instrument">Instrument</label>
           <InstrumentSelector
