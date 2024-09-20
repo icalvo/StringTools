@@ -19,6 +19,7 @@
   "dependencies": {
     "@netlify/functions": "^2.8.1",
     "abcjs": "^6.4.3",
+    "lilynode": "^0.5.2",
     "pinia": "^2.1.7",
     "vue": "^3.5.4",
     "vue-router": "^4.3.3"
