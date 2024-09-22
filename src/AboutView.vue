@@ -11,6 +11,9 @@
       String Tools has been developed by <a href="https://ignaciocalvo.com" class="underline accent-blue-500">Ignacio Calvo</a> . It's
       open source available at <a href="https://github.com/icalvo/StringTools" class="underline accent-blue-500">Github.</a>
     </p>
+    <p class="paragraph">
+      If you have any issue, please report it at <a href="https://github.com/icalvo/StringTools/issues" class="underline accent-blue-500">the issue tracker.</a>
+    </p>
   </div>
 </template>
 <script setup lang="ts">
