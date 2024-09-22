@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { type Instrument } from '@/data/instruments'
+import { type Instrument } from '@/packages/string-fingerings'
 import { renderAbc } from 'abcjs'
 import { useTemplateRef, watch } from 'vue'
 import { useInstrumentsStore } from "@/stores/instrumentsStore";

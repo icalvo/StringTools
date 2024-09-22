@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import {computed} from 'vue'
-import {type InstrumentString} from '@/data/instruments'
-import {getStopRelPos} from '@/data/fingerings'
 import {fingeringColor} from '@/data/presentation'
 import {useFingeringStore} from "@/stores/fingeringsStore";
 import {useInstrumentsStore} from "@/stores/instrumentsStore";
+import {getStopRelPos, type InstrumentString} from "@/packages/string-fingerings";
 const props = defineProps<{
   instrumentIndex: number
 }>()

@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import type {Instrument} from '@/data/instruments'
+import type {Instrument} from '@/packages/string-fingerings'
 import {computed} from 'vue'
 import {fingeringColor} from '@/data/presentation'
 import {useFingeringStore} from "@/stores/fingeringsStore";

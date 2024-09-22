@@ -1,12 +1,15 @@
-﻿import type { Instrument } from '@/data/instruments'
-import type {Stop} from "@/data/types";
+﻿import type {Instrument, Stop} from "./types";
 
+/**
+ * Gets the MIDI note number from a text representation (middle C is 'C4')
+ * @param noteName Can include sharp (#) and flat (b) alterations, like Db5 or F#2.
+ * @returns The MIDI note number or a string with an explanatory error message.
+ */
 export function noteNumber(noteName: string): number | string {
-  if (noteName == null) return 'Null note name'
-  noteName = noteName.trim().toUpperCase()
+  noteName = noteName.trim()
   if (noteName.length < 2) return 'Note names must be at least two characters long'
   let pointer = 0
-  const firstChar = noteName.charCodeAt(pointer)
+  const firstChar = noteName.charAt(pointer).toUpperCase().charCodeAt(0)
   if (firstChar < 65 || firstChar > 65 + 7) return 'First char must be ABCDEFG'
 
   const noteIndex = (firstChar - 67 + 7) % 7
@@ -14,10 +17,10 @@ export function noteNumber(noteName: string): number | string {
 
   pointer++
   let alteration = 0
-  if (noteName.charAt(1) === '#') {
+  if (noteName.charAt(pointer) === '#') {
     alteration = 1
     pointer++
-  } else if (noteName.charAt(1) === 'b') {
+  } else if (noteName.charAt(pointer) === 'b') {
     alteration = -1
     pointer++
   }
@@ -26,13 +29,19 @@ export function noteNumber(noteName: string): number | string {
   pointer++
   if (pointer !== noteName.length) return 'Note name has extra characters'
 
-  return semitoneIndex[noteIndex] + alteration + octave * 12
+  return semitoneIndex[noteIndex] + alteration + (octave + 1) * 12
+}
+
+export function nn(noteName: string) {
+    const n = noteNumber(noteName)
+    if (typeof n === 'string') throw `Invalid note name: ${n}`
+    return n
 }
 
 export function noteName(noteNumber: number): string {
   const noteIndex = noteNumber % 12
   const noteName = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][noteIndex]
-  const octave = Math.floor(noteNumber / 12)
+  const octave = Math.floor((noteNumber / 12)) - 1
   return noteName + octave
 }
 
@@ -82,6 +91,10 @@ function* stopsForString(
   }
 }
 
+/**
+ * Returns the stop position relative to a string of length 1
+ * @param stopIndex semitone index (number of semitones above the open string)
+ */
 export function getStopRelPos(stopIndex: number): number {
   return 1 - Math.pow(2, -stopIndex / 12)
 }
@@ -173,7 +186,7 @@ function fingeringHardness(instrument: Instrument, fingering: Stop[]): number {
   return stretchesHardness(instrument, fingeringStretches(instrument, sortedFingering))
 }
 
-export function hasNoGaps(_instrument: Instrument, fingering: Stop[]): boolean {
+export function hasNoGaps(_instrument: any, fingering: {stringIndex: number}[]): boolean {
   return fingering
     .map((stop) => stop.stringIndex)
     .sort()
@@ -185,6 +198,13 @@ export function hasPossibleStretch(instrument: Instrument, fingering: Stop[]): b
   return fingeringHardness(instrument, fingering) !== 1.0
 }
 
+/**
+ * Calculates the fingerings for an instrument and a set of notes.
+ * @param instrument
+ * @param notes
+ * @param validations
+ * @param includeNaturalHarmonics
+ */
 export function calculateFingerings(
   instrument: Instrument,
   notes: number[],
@@ -194,7 +214,6 @@ export function calculateFingerings(
   console.debug(`Calculating fingerings for ${notes} on ${instrument.name}`)
 
   const stopsByNote = stopsForInstrument(instrument, notes, includeNaturalHarmonics)
-  console.debug('Stops:', stopsByNote)
 
   if (notes.length === 1) {
     if (stopsByNote.length === 0) return []

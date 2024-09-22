@@ -1,5 +1,5 @@
-﻿import type {FingeringToggle, Stop} from "@/data/types";
-import {defineStore} from "pinia";
+﻿import {defineStore} from "pinia";
+import type {FingeringToggle, Stop} from "@/packages/string-fingerings";
 
 interface State {
     fingeringToggles: FingeringToggle[]

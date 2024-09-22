@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import StopsDiagram from '@/StringStopsDiagram.vue'
 import {computed, ref, watch} from 'vue'
-import { calculateFingerings, hasNoGaps, hasPossibleStretch } from '@/data/fingerings'
 import ScoreDisplay from '@/components/ScoreDisplay.vue'
 import NoteInput from '@/components/NotesInput.vue'
 import InstrumentSelector from '@/components/InstrumentSelector.vue'
@@ -9,6 +8,7 @@ import FingeringsDescription from '@/StringStopsFingeringsDescription.vue'
 import {useFingeringStore} from "@/stores/fingeringsStore";
 import CheckboxBase from "@/components/CheckboxBase.vue";
 import {useInstrumentsStore} from "@/stores/instrumentsStore";
+import {calculateFingerings, hasNoGaps, hasPossibleStretch} from "@/packages/string-fingerings";
 
 const fingeringsStore = useFingeringStore()
 const instrumentsStore = useInstrumentsStore()

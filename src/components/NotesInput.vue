@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { noteName, noteNumber } from '@/data/fingerings'
+import { noteName, noteNumber } from '@/packages/string-fingerings'
 
 const notes = defineModel<number[]>()
 

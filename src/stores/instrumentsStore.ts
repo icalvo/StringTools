@@ -1,27 +1,18 @@
 ﻿import {defineStore} from "pinia";
-import type {Instrument} from "@/data/instruments";
-import {noteNumber} from "@/data/fingerings";
+import type {Instrument} from "@/packages/string-fingerings";
+import {nn} from "@/packages/string-fingerings";
 
 interface State {
-    instrumentz: Instrument[]
+    instruments: Instrument[]
 }
 export const useInstrumentsStore = defineStore('instruments', {
-    state: (): State => ({ instrumentz: initialInstruments }),
-    getters: {
-        instruments: state => state.instrumentz
-    },
+    state: (): State => ({ instruments: initialInstruments }),
     actions: {
         changeStops(instrumentIndex: number, stops: number) {
-            this.instrumentz[instrumentIndex].stops = stops
+            this.instruments[instrumentIndex].stops = stops
         },
     },
 })
-
-function nn(noteName: string) {
-    const n = noteNumber(noteName)
-    if (typeof n === 'string') throw `Invalid note name: ${n}`
-    return n
-}
 
 const initialInstruments: Instrument[] = [
     {
