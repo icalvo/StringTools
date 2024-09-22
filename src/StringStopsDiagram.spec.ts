@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 
 import { mount } from '@vue/test-utils'
-import StopsDiagram from '@/components/StopsDiagram.vue'
+import StopsDiagram from '@/StringStopsDiagram.vue'
 import {createPinia, setActivePinia} from "pinia";
 
 describe('StopsDiagram', () => {

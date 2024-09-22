@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import {computed} from 'vue'
-import {instruments, type InstrumentString} from '@/data/instruments'
+import {type InstrumentString} from '@/data/instruments'
 import {getStopRelPos} from '@/data/fingerings'
 import {fingeringColor} from '@/data/presentation'
-import {useFingeringStore} from "@/stores/fingerings";
-
+import {useFingeringStore} from "@/stores/fingeringsStore";
+import {useInstrumentsStore} from "@/stores/instrumentsStore";
 const props = defineProps<{
   instrumentIndex: number
 }>()
 
 const fingeringsStore = useFingeringStore()
-
+const instrumentsStore = useInstrumentsStore()
+const instruments = instrumentsStore.instruments
 const instrument = computed(() => instruments[props.instrumentIndex])
 const stops = computed(() =>
     fingeringsStore.fingeringToggles.flatMap((fingeringToggle, fingeringIndex) => {

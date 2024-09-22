@@ -1,10 +1,14 @@
 ﻿<script setup lang="ts">
-import { type Instrument, instruments } from '@/data/instruments'
+import { type Instrument } from '@/data/instruments'
 import { renderAbc } from 'abcjs'
 import { useTemplateRef, watch } from 'vue'
+import { useInstrumentsStore } from "@/stores/instrumentsStore";
+
+const instrumentsStore = useInstrumentsStore()
+const instruments = instrumentsStore.instruments
 
 const props = defineProps<{
-  notes: Array<number> | null
+  notes: number[] | null
   instrumentIndex: number
 }>()
 function abcnote(noteNumber: number): string {

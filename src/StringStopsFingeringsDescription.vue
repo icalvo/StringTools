@@ -2,7 +2,7 @@
 import type {Instrument} from '@/data/instruments'
 import {computed} from 'vue'
 import {fingeringColor} from '@/data/presentation'
-import {useFingeringStore} from "@/stores/fingerings";
+import {useFingeringStore} from "@/stores/fingeringsStore";
 
 const props = defineProps<{
   instrument: Instrument

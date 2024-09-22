@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { noteName, noteNumber } from '@/data/fingerings'
 
-const notes = defineModel<Array<number>>()
+const notes = defineModel<number[]>()
 
 const notesToRepr = computed(() => notes.value?.map((n) => noteName(n)).join(' ') ?? '')
 const representation = ref('')
@@ -32,7 +32,7 @@ watch(notesToRepr, (newValue) => {
 })
 
 watch(reprToNotes, (newValue) => {
-  console.log('Updating notes with ', newValue)
+  console.debug('Updating notes with ', newValue)
   notes.value = newValue
 })
 

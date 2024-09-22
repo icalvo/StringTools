@@ -1,6 +1,9 @@
 ﻿<script setup lang="ts">
 import { ref } from 'vue'
-import { instruments } from '@/data/instruments'
+import { useInstrumentsStore } from "@/stores/instrumentsStore";
+
+const instrumentsStore = useInstrumentsStore()
+const instruments = instrumentsStore.instruments
 
 const selectedInstrument = defineModel<number>()
 const instrumentOptions = ref(
