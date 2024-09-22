@@ -10,7 +10,7 @@ import { RouterLink, RouterView } from 'vue-router'
       <div class="wrapper">
         <nav>
           <RouterLink to="/" class="inline-block p-2">Home</RouterLink>
-          <RouterLink to="/stringstops" class="inline-block p-2">String stops</RouterLink>
+<!--          <RouterLink to="/stringstops" class="inline-block p-2">String stops</RouterLink>-->
           <RouterLink to="/about" class="inline-block p-2">About</RouterLink>
         </nav>
       </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="about pt-4">
+  <div class="about pt-4 w-96 mx-auto">
     <h1 class="view-title">About</h1>
     <p class="paragraph">
       I am a composer, but not a string player. There are plenty of situations, when composing for
@@ -8,8 +8,10 @@
       of string players!
     </p>
     <p class="paragraph">
-      String Tools has been developed by <a href="https://ignaciocalvo.com">Ignacio Calvo</a> . It's
-      open source available at <a href="https://github.com/icalvo/StringTools">Github.</a>
+      String Tools has been developed by <a href="https://ignaciocalvo.com" class="underline accent-blue-500">Ignacio Calvo</a> . It's
+      open source available at <a href="https://github.com/icalvo/StringTools" class="underline accent-blue-500">Github.</a>
     </p>
   </div>
 </template>
+<script setup lang="ts">
+</script>
