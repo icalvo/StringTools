@@ -4,6 +4,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
