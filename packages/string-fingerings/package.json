@@ -1,0 +1,42 @@
+{
+  "name": "string-fingerings",
+  "version": "0.0.5",
+  "description": "Utilities for calculating fingerings on string instruments",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/icalvo/StringTools.git"
+  },
+  "keywords": [
+    "string",
+    "instrument",
+    "fingering",
+    "notes",
+    "midi"
+  ],
+  "author": "Ignacio Calvo <ignacio.calvo@gmail.com> (https://ignaciocalvo.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/icalvo/StringTools/issues"
+  },
+  "homepage": "https://github.com/icalvo/StringTools#readme",
+  "scripts": {
+    "build": "tsc",
+    "dev": "vitest",
+    "ci": "npm run build & npm run check-format & npm run check-exports",
+    "check-format": "prettier --check .",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "test": "vitest run",
+    "prepublishOnly": "npm run ci"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.16.4",
+    "@changesets/cli": "^2.27.8",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.1"
+  }
+}

@@ -1,4 +1,4 @@
-﻿import type {Instrument, Stop} from "./types";
+﻿import type {Instrument, Stop} from "./types.js";
 
 /**
  * Gets the MIDI note number from a text representation (middle C is 'C4')
@@ -29,7 +29,7 @@ export function noteNumber(noteName: string): number | string {
   pointer++
   if (pointer !== noteName.length) return 'Note name has extra characters'
 
-  return semitoneIndex[noteIndex] + alteration + (octave + 1) * 12
+  return (semitoneIndex[noteIndex] ?? NaN) + alteration + (octave + 1) * 12
 }
 
 export function nn(noteName: string) {
@@ -39,10 +39,30 @@ export function nn(noteName: string) {
 }
 
 export function noteName(noteNumber: number): string {
+  if (!Number.isSafeInteger(noteNumber) || noteNumber < 0 || noteNumber > 127) {
+    throw "Invalid note number"
+  }
+
   const noteIndex = noteNumber % 12
-  const noteName = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][noteIndex]
+  const noteName = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][noteIndex] ?? ""
   const octave = Math.floor((noteNumber / 12)) - 1
   return noteName + octave
+}
+
+export function abcnote(noteNumber: number): string {
+    const noteIndex = noteNumber % 12
+    let noteName = ['c', 'c', 'd', 'd', 'e', 'f', 'f', 'g', 'g', 'a', 'a', 'b'][noteIndex] ?? ""
+    const alteration = ['', '^', '', '^', '', '', '^', '', '^', '', '^', ''][noteIndex] ?? ""
+    const octave = Math.floor(noteNumber / 12)
+    let ticks: number
+    if (octave <= 5) {
+        noteName = noteName.toUpperCase()
+        ticks = 5 - octave
+        return `${alteration}${noteName}${','.repeat(ticks)}`
+    } else {
+        ticks = octave - 6
+        return `${alteration}${noteName}${"'".repeat(ticks)}`
+    }
 }
 
 function* stopsForString(
@@ -53,6 +73,7 @@ function* stopsForString(
 ) {
   console.debug(`Calculating stop for note ${noteNumber} on string ${stringIndex}`)
   const instrumentString = instrument.strings[stringIndex]
+  if (!instrumentString) return;
   const openNote = instrumentString.openNote as number
   const stopIndex = noteNumber - openNote
 
@@ -216,8 +237,7 @@ export function calculateFingerings(
   const stopsByNote = stopsForInstrument(instrument, notes, includeNaturalHarmonics)
 
   if (notes.length === 1) {
-    if (stopsByNote.length === 0) return []
-    return stopsByNote[0].map((f) => [f])
+    return stopsByNote.flatMap(noteStops => noteStops.map(s => [s]))
   }
 
   const init: Stop[][] = []

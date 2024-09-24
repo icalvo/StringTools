@@ -1,6 +1,6 @@
 ﻿import {defineStore} from "pinia";
-import type {Instrument} from "@/packages/string-fingerings";
-import {nn} from "@/packages/string-fingerings";
+import type {Instrument} from "string-fingerings";
+import {nn} from "string-fingerings";
 
 interface State {
     instruments: Instrument[]

@@ -3,9 +3,11 @@ import {computed} from 'vue'
 import {fingeringColor} from '@/data/presentation'
 import {useFingeringStore} from "@/stores/fingeringsStore";
 import {useInstrumentsStore} from "@/stores/instrumentsStore";
-import {getStopRelPos, type InstrumentString} from "@/packages/string-fingerings";
+import {getStopRelPos, type InstrumentString} from "string-fingerings";
 const props = defineProps<{
   instrumentIndex: number
+  hideStrings?: boolean
+  hideSteps?: boolean
 }>()
 
 const fingeringsStore = useFingeringStore()
@@ -21,6 +23,7 @@ const stops = computed(() =>
         const stopPos = getStopRelPos(s.stopIndex)
         const stopAbsPos = getStopAbsPos(instrument.value.strings[s.stringIndex], stopPos)
         return {
+          fingeringIndex,
           x: stopAbsPos.x,
           y: stopAbsPos.y,
           r: hardFingering ? 4 : 8,
@@ -66,7 +69,7 @@ function getStopAbsPos(string: InstrumentString, stopRelPos: number) {
 <template>
   <svg viewBox="0 0 600 1018" :style="{ backgroundImage: `url(${instrument.image})` }">
     <line
-        v-for="(c, idx) in strings"
+        v-for="(c, idx) in (props.hideStrings?[]:strings)"
         :key="idx"
         :x1="c.sx"
         :y1="c.sy"
@@ -75,7 +78,7 @@ function getStopAbsPos(string: InstrumentString, stopRelPos: number) {
         stroke="blue"
     />
     <circle
-        v-for="(c, idx) in allStops"
+        v-for="(c, idx) in (props.hideSteps?[]:allStops)"
         :key="idx"
         :cx="c.x"
         :cy="c.y"
@@ -112,6 +115,7 @@ function getStopAbsPos(string: InstrumentString, stopRelPos: number) {
         :stroke="c.color"
         stroke-width="2"
         fill="none"
+        :class="`fingering${c.fingeringIndex+1}`"
     />
   </svg>
 </template>
