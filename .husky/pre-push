@@ -1,2 +1,3 @@
+cd website
 npm run type-check
 npm run test:commit
