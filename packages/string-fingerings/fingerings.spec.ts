@@ -101,26 +101,18 @@ const violin = {
     {
       name: 'G',
       openNote: nn('G3'),
-      startPositionInImage: [287, 229],
-      endPositionInImage: [269, 990]
     },
     {
       name: 'D',
       openNote: nn('D4'),
-      startPositionInImage: [299, 229],
-      endPositionInImage: [297, 990]
     },
     {
       name: 'A',
       openNote: nn('A4'),
-      startPositionInImage: [312, 229],
-      endPositionInImage: [326, 991]
     },
     {
       name: 'E',
       openNote: nn('E5'),
-      startPositionInImage: [322, 230],
-      endPositionInImage: [352, 991]
     }
   ]
 }

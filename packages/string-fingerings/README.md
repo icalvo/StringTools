@@ -1,4 +1,4 @@
-﻿# string-fingerings
+﻿# String fingerings
 
 Utilities for calculating fingerings on string instruments.
 

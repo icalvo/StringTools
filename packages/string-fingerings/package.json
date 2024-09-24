@@ -31,10 +31,13 @@
     "check-format": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "test": "vitest run",
+    "docs": "typedoc",
     "prepublishOnly": "npm run ci"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
+    "@mxssfd/typedoc-theme": "^1.1.7",
+    "typedoc": "^0.26.7",
     "typescript": "^5.5.4",
     "vitest": "^2.1.1"
   }
