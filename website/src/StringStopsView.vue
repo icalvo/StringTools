@@ -35,9 +35,9 @@ watch([instrument, stops, parsedNotes, validateNoGaps, validatePossibleStretch, 
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex flex-col h-full pl-4">
     <div class="flex-auto basis-96 flex flex-row overflow-hidden">
-      <div class="flex-initial basis-1/2 p-4 text-wrap overflow-y-auto border-r-2 border-gray-300">
+      <div class="flex-initial basis-1/2 p-4 text-wrap overflow-y-auto">
         <h2 class="view-title">String Stops</h2>
         <div>
           <div class="flex flex-row flex-wrap">
@@ -78,7 +78,7 @@ id="validatePossibleStretch" v-model="validatePossibleStretch"
       </div>
       <div class="flex-auto">
         <StopsDiagram
-            class="max-h-full mx-auto"
+            class="max-h-full mx-auto border-l-2 border-l-gray-300 border-b-2 border-b-gray-300"
             :instrument-index="selectedInstrument"
         />
       </div>

@@ -16,7 +16,7 @@ import { RouterLink, RouterView } from 'vue-router'
       </div>
     </header>
 
-    <main class="flex-auto px-4">
+    <main class="flex-auto">
       <RouterView />
     </main>
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="about pt-4 w-96 mx-auto">
+  <div class="about pt-4 px-4 w-96 mx-auto">
     <h1 class="view-title">About</h1>
     <p class="paragraph">
       I am a composer, but not a string player. There are plenty of situations, when composing for
