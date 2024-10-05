@@ -52,6 +52,11 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git commit -am "Bump release version (${{ github.event.inputs.version }})"
           git push
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          registry-url: 'https://registry.npmjs.org'
       - name: Publish package
         run: npm publish --provenance --access public
         env:
