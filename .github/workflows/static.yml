@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version (major | minor | patch | premajor | preminor | prepatch | prerelease)'
+        description: 'Version bump type'
         required: true
         default: 'patch'
         type: choice
