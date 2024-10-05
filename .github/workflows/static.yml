@@ -5,9 +5,18 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version (<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | from-git)'
+        description: 'Version (major | minor | patch | premajor | preminor | prepatch | prerelease)'
         required: true
         default: 'patch'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+          - premajor
+          - preminor
+          - prepatch
+          - prerelease
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
