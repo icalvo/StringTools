@@ -4,12 +4,10 @@ name: Publish NPM package and deploy docs to Pages
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
+      version:
         description: 'Version (<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | from-git)'
         required: true
         default: 'patch'
-      tags:
-        description: 'Publish package'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -38,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Version package
-        run: npm version ${{ github.event.inputs.version }}
+        run: npm version ${{ github.event.inputs.c }}
       - name: Push commit
         run: |
           git config --global user.name 'github-actions[bot]'
