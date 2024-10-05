@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Version package
-        run: npm version ${{ github.event.inputs.c }}
+        run: npm version ${{ github.event.inputs.version }}
       - name: Push commit
         run: |
           git config --global user.name 'github-actions[bot]'
