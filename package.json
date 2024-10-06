@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "husky": "^9.1.6"
+    "husky": "^9.1.6",
+    "npm-check-updates": "^17.1.3"
   }
 }

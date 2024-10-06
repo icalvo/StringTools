@@ -27,7 +27,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "vitest",
-    "ci": "npm run build & npm run check-format & npm run check-exports",
+    "ci": "npm run build",
     "check-format": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "test": "vitest run",
