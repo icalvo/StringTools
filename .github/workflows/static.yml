@@ -61,6 +61,8 @@ jobs:
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: List dist
+        run: ls dist
       - name: Generate docs
         run: npm run docs
       - name: Setup Pages
