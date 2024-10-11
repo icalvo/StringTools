@@ -34,3 +34,6 @@ playwright-report/
 
 # Local Netlify folder
 .netlify
+
+# .NET folders
+obj

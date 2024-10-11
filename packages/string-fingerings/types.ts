@@ -18,7 +18,7 @@ export interface InstrumentString {
     openNote: number
 }
 
-export interface Instrument {
+export interface Instrument<TString extends InstrumentString> {
     /** Name of the instrument */
     name: string
     /** If it is a transposing instrument, number of semitones to add to get the written note. */
@@ -31,6 +31,6 @@ export interface Instrument {
     hardStretch: number
     /** Maximum stretch length in mm */
     maxStretch: number
-    clef: string
-    strings: InstrumentString[]
+    /** Strings of the instrument  */
+    strings: TString[]
 }

@@ -1,4 +1,4 @@
-﻿import type {Instrument, Stop} from "./types.js";
+﻿import type { Instrument, InstrumentString, Stop } from './types.js'
 
 /**
  * Gets the MIDI note number from a text representation (middle C is 'C4')
@@ -65,8 +65,8 @@ export function abcnote(noteNumber: number): string {
     }
 }
 
-function* stopsForString(
-  instrument: Instrument,
+function* stopsForString<TString extends InstrumentString>(
+  instrument: Instrument<TString>,
   stringIndex: number,
   noteNumber: number,
   includeNaturalHarmonics: boolean
@@ -120,8 +120,8 @@ export function getStopRelPos(stopIndex: number): number {
   return 1 - Math.pow(2, -stopIndex / 12)
 }
 
-function stopsForInstrument(
-  instrument: Instrument,
+function stopsForInstrument<TString extends InstrumentString>(
+  instrument: Instrument<TString>,
   notes: number[],
   includeNaturalHarmonics: boolean
 ): Stop[][] {
@@ -148,7 +148,7 @@ function cross(addValidation: Function, l1: Stop[][], l2: Stop[]): Stop[][] {
   return l1.flatMap((i1) => l2.filter((i2) => addValidation(i1, i2)).map((i2) => i1.concat([i2])))
 }
 
-function fingeringStretch(instrument: Instrument, stop1: Stop, stop2: Stop): number {
+function fingeringStretch<TString extends InstrumentString>(instrument: Instrument<TString>, stop1: Stop, stop2: Stop): number {
   const stopRelPos1 = getStopRelPos(stop1.stopIndex)
   const stopRelPos2 = getStopRelPos(stop2.stopIndex)
   return instrument.scaleLength * Math.abs(stopRelPos2 - stopRelPos1)
@@ -164,7 +164,7 @@ Array.prototype.pairwise = function () {
   return this.slice(1).map((x, i) => [this[i], x])
 }
 
-function fingeringStretches(instrument: Instrument, stops: Stop[]): [Stop, number, Stop][] {
+function fingeringStretches<TString extends InstrumentString>(instrument: Instrument<TString>, stops: Stop[]): [Stop, number, Stop][] {
   return stops
     .pairwise()
     .map(([stop1, stop2]) => [stop1, fingeringStretch(instrument, stop1, stop2), stop2])
@@ -174,8 +174,8 @@ function isOpenString(stop: Stop): boolean {
   return stop.stopIndex === 0
 }
 
-function stretchHardness(
-  instrument: Instrument,
+function stretchHardness<TString extends InstrumentString>(
+  instrument: Instrument<TString>,
   stop1: Stop,
   stretch: number,
   stop2: Stop
@@ -195,13 +195,13 @@ function stretchHardness(
   return 0.1
 }
 
-function stretchesHardness(instrument: Instrument, stretches: [Stop, number, Stop][]): number {
+function stretchesHardness<TString extends InstrumentString>(instrument: Instrument<TString>, stretches: [Stop, number, Stop][]): number {
   return stretches
     .map(([stop1, stretch, stop2]) => stretchHardness(instrument, stop1, stretch, stop2))
     .reduce((a, b) => Math.max(a, b))
 }
 
-function fingeringHardness(instrument: Instrument, fingering: Stop[]): number {
+function fingeringHardness<TString extends InstrumentString>(instrument: Instrument<TString>, fingering: Stop[]): number {
   const sortedFingering = fingering.sort((s1, s2) => s1.stringIndex - s2.stringIndex)
 
   return stretchesHardness(instrument, fingeringStretches(instrument, sortedFingering))
@@ -215,7 +215,7 @@ export function hasNoGaps(_instrument: any, fingering: {stringIndex: number}[]):
     .every(([str1, str2]) => Math.abs(str1 - str2) <= 1)
 }
 
-export function hasPossibleStretch(instrument: Instrument, fingering: Stop[]): boolean {
+export function hasPossibleStretch<TString extends InstrumentString>(instrument: Instrument<TString>, fingering: Stop[]): boolean {
   return fingeringHardness(instrument, fingering) !== 1.0
 }
 
@@ -226,8 +226,8 @@ export function hasPossibleStretch(instrument: Instrument, fingering: Stop[]): b
  * @param validations
  * @param includeNaturalHarmonics
  */
-export function calculateFingerings(
-  instrument: Instrument,
+export function calculateFingerings<TString extends InstrumentString>(
+  instrument: Instrument<TString>,
   notes: number[],
   validations: Function[],
   includeNaturalHarmonics: boolean = false
