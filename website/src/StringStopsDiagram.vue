@@ -2,7 +2,7 @@
 import {computed} from 'vue'
 import {fingeringColor} from '@/data/presentation'
 import {useFingeringStore} from "@/stores/fingeringsStore";
-import {useInstrumentsStore} from "@/stores/instrumentsStore";
+import { type UiString, useInstrumentsStore } from '@/stores/instrumentsStore'
 import {getStopRelPos, type InstrumentString} from "string-fingerings";
 const props = defineProps<{
   instrumentIndex: number
@@ -55,7 +55,7 @@ const allStops = computed(() =>
     )
 )
 
-function getStopAbsPos(string: InstrumentString, stopRelPos: number) {
+function getStopAbsPos(string: UiString, stopRelPos: number) {
   const stringStartX = string.startPositionInImage[0]
   const stringStartY = string.startPositionInImage[1]
   const stringEndX = string.endPositionInImage[0]

@@ -1,8 +1,8 @@
 ﻿<script setup lang="ts">
-import {abcnote, type Instrument} from 'string-fingerings'
+import { abcnote } from 'string-fingerings'
 import { renderAbc } from 'abcjs'
 import {computed, useTemplateRef, watch} from 'vue'
-import { useInstrumentsStore } from "@/stores/instrumentsStore";
+import { type UiInstrument, useInstrumentsStore } from '@/stores/instrumentsStore'
 
 const instrumentsStore = useInstrumentsStore()
 const instruments = instrumentsStore.instruments
@@ -11,7 +11,7 @@ const instruments = instrumentsStore.instruments
 const props = withDefaults(
     defineProps<{
       notes: {note:number,harmonic:boolean}[] | null
-      instrument: number | Instrument
+      instrument: number | UiInstrument
       scale?: number
     }>(),
     { scale: 2 })
@@ -20,7 +20,7 @@ const instrument = computed(() =>
     typeof props.instrument === "number"
     ? instruments[props.instrument]
     : props.instrument)
-function showScore(target: HTMLElement, notes: {note:number,harmonic:boolean}[], instrument: Instrument) {
+function showScore(target: HTMLElement, notes: {note:number,harmonic:boolean}[], instrument: UiInstrument) {
   const lowestNote = instrument.strings.reduce((prev, curr) => Math.min(prev, curr.openNote), 1000)
   const highestNote = instrument.strings.reduce(
     (prev, curr) => Math.max(prev, curr.openNote + instrument.stops),

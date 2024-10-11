@@ -1,13 +1,13 @@
 ﻿<script setup lang="ts">
-import type {Instrument} from 'string-fingerings'
 import {computed} from 'vue'
 import {fingeringColor} from '@/data/presentation'
 import {useFingeringStore} from "@/stores/fingeringsStore";
 import ScoreDisplay from "@/components/ScoreDisplay.vue";
 import ToggleBase from "@/components/ToggleBase.vue";
+import type { UiInstrument } from '@/stores/instrumentsStore'
 
 const props = defineProps<{
-  instrument: Instrument
+  instrument: UiInstrument
 }>()
 
 const fingeringsStore = useFingeringStore()

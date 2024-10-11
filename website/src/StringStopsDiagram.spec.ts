@@ -3,7 +3,7 @@ import {describe, it, expect, vi} from 'vitest'
 import {mount} from '@vue/test-utils'
 import StopsDiagram from '@/StringStopsDiagram.vue'
 import { createTestingPinia } from '@pinia/testing'
-import type {FingeringToggle} from "string-fingerings";
+import type { FingeringToggle } from '@/stores/fingeringsStore'
 
 describe('StopsDiagram', () => {
   it('renders properly a violin fingering', () => {

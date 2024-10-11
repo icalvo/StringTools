@@ -1,10 +1,23 @@
-﻿import {defineStore} from "pinia";
-import type {Instrument} from "string-fingerings";
-import {nn} from "string-fingerings";
+﻿import {defineStore} from 'pinia';
+import type { Instrument, InstrumentString } from 'string-fingerings'
+import {nn} from 'string-fingerings';
+
+//** Adds UI-related properties to the string-fingerings types */
+export interface UiInstrument extends Instrument<UiString> {
+  image: string
+  clef: 'treble'|'alto'|'tenor'|'bass'
+}
+
+//** Adds UI-related properties to the string-fingerings types */
+export interface UiString extends InstrumentString {
+  startPositionInImage: number[]
+  endPositionInImage: number[]
+}
 
 interface State {
-    instruments: Instrument[]
+    instruments: UiInstrument[]
 }
+
 export const useInstrumentsStore = defineStore('instruments', {
     state: (): State => ({ instruments: initialInstruments }),
     actions: {
@@ -14,7 +27,7 @@ export const useInstrumentsStore = defineStore('instruments', {
     },
 })
 
-const initialInstruments: Instrument[] = [
+const initialInstruments: UiInstrument[] = [
     {
         name: 'Violin',
         stops: 24,
