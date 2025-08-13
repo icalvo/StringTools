@@ -1,18 +1,29 @@
 ﻿<script setup lang="ts">
-  const model =  defineModel<boolean>('input')
+const model = defineModel<boolean>('input')
 
-  const props = defineProps<{
-    id: string
-    color: string
-  }>()
+const props = defineProps<{
+  id: string
+  color: string
+}>()
 </script>
 
 <template>
-    <span class="checkbox-wrapper-2 ali">
-      <input
-          :id="props.id" v-model="model" :name="props.id" type="checkbox" :style="{'--bgColor': props.color}" />
-      <slot></slot>
-    </span>
+  <span class="checkbox-wrapper-2 ali">
+    <div class="flex flex-row items-center gap-2">
+      <div class="">
+        <input
+          :id="props.id"
+          v-model="model"
+          :name="props.id"
+          type="checkbox"
+          :style="{ '--bgColor': props.color }"
+        />
+      </div>
+      <div class="pb-1">
+        <slot></slot>
+      </div>
+    </div>
+  </span>
 </template>
 
 <style scoped>
@@ -34,7 +45,7 @@
 
 .checkbox-wrapper-2 input::before {
   bottom: -6px;
-  content: "";
+  content: '';
   left: -6px;
   position: absolute;
   right: -6px;
@@ -49,7 +60,7 @@
 .checkbox-wrapper-2 input::after {
   background-color: #fff;
   border-radius: 50%;
-  content: "";
+  content: '';
   height: 14px;
   left: 3px;
   position: absolute;
@@ -57,7 +68,7 @@
   width: 14px;
 }
 
-.checkbox-wrapper-2 input[type=checkbox] {
+.checkbox-wrapper-2 input[type='checkbox'] {
   cursor: default;
 }
 
