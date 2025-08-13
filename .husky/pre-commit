@@ -1,2 +1,3 @@
 cd website
 npx lint-staged
+npm run test:commit
