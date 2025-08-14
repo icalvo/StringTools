@@ -2,6 +2,25 @@
 
 This is the repository of [String Tools](https://stringinstrumenttools.netlify.app) site. It is built with Vue 3.
 
+## String stops calculator
+
+This tool calculates multiple-stop fingerings for the provided notes.
+![Screenshot](docs/img.png)
+
+Features:
+- Four instruments: violin, viola, cello and double 5-string double bass.
+- Note input by text (e.g. `D5 G5`) or MIDI input.
+- Can select how far down the fingerboard can the player reach.
+- Optionally, calculates fingerings with gaps (skipped strings in the middle) which are useful for pizzicato.
+- Optionally, can include fingerings with finger stretches that are too wide.
+- Optionally, it includes fingerings with natural harmonics.
+- The instrument is shown with a superimposed diagram with the selected fingerings.
+- Can select/deselect fingerings for display in the diagram.
+- Each found fingering is displayed in a card with a detailed description.
+- The notes are displayed in score view.
+
+# Contributors
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
