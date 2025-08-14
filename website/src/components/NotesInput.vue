@@ -1,72 +1,4 @@
 ﻿<script setup lang="ts">
-// WebMidi interfaces
-declare namespace WebMidi {
-  interface MIDIOptions {
-    sysex?: boolean
-    software?: boolean
-  }
-
-  interface MIDIMessageEvent {
-    data: Uint8Array
-  }
-
-  interface MIDIPort {
-    id: string
-    manufacturer?: string
-    name?: string
-    type: 'input' | 'output'
-    version?: string
-    state: 'connected' | 'disconnected'
-    connection: 'open' | 'closed' | 'pending'
-    onmidimessage: ((event: MIDIMessageEvent) => void) | null
-    onstatechange: ((event: MIDIConnectionEvent) => void) | null
-  }
-
-  interface MIDIInput extends MIDIPort {
-    type: 'input'
-  }
-
-  interface MIDIOutput extends MIDIPort {
-    type: 'output'
-    send(data: number[] | Uint8Array, timestamp?: number): void
-  }
-
-  interface MIDIInputMap {
-    size: number
-    entries(): IterableIterator<[string, MIDIInput]>
-    keys(): IterableIterator<string>
-    values(): IterableIterator<MIDIInput>
-    forEach(callback: (value: MIDIInput, key: string) => void): void
-    get(key: string): MIDIInput | undefined
-    has(key: string): boolean
-  }
-
-  interface MIDIOutputMap {
-    size: number
-    entries(): IterableIterator<[string, MIDIOutput]>
-    keys(): IterableIterator<string>
-    values(): IterableIterator<MIDIOutput>
-    forEach(callback: (value: MIDIOutput, key: string) => void): void
-    get(key: string): MIDIOutput | undefined
-    has(key: string): boolean
-  }
-
-  interface MIDIConnectionEvent {
-    port: MIDIPort
-  }
-
-  interface MIDIAccess {
-    inputs: MIDIInputMap
-    outputs: MIDIOutputMap
-    onstatechange: ((event: MIDIConnectionEvent) => void) | null
-    sysexEnabled: boolean
-  }
-}
-
-// noinspection JSUnusedGlobalSymbols
-interface Navigator {
-  // requestMIDIAccess(options?: WebMidi.MIDIOptions): Promise<WebMidi.MIDIAccess>
-}
 
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { noteName, noteNumber } from 'string-fingerings'
@@ -77,7 +9,7 @@ const notesToRepr = computed(() => notes.value?.map((n) => noteName(n)).join(' '
 const representation = ref('')
 const connectedPorts = ref<Set<string>>(new Set())
 const midiEnabled = computed(() => connectedPorts.value.size > 0)
-const midiAccess = ref<WebMidi.MIDIAccess | null>(null)
+const midiAccess = ref<MIDIAccess | null>(null)
 const activeNotes = ref<Set<number>>(new Set())
 const pressedNotes = ref<Set<number>>(new Set())
 
@@ -129,10 +61,14 @@ onMounted(() => {
         }
 
         // Listen for connected/disconnected devices
-        access.onstatechange = (event) => {
+        access.onstatechange = (ev) => {
+          const event = ev as MIDIConnectionEvent
+          if (event.port === null) return;
           if (event.port.type === 'input') {
             if (event.port.state === 'connected') {
-              event.port.onmidimessage = handleMIDIMessage
+              const input = event.port as MIDIInput
+              
+              input.onmidimessage = handleMIDIMessage
               console.log('MIDI input connected:', event.port.name)
               connectedPorts.value.add(event.port.id)
             } else {
@@ -161,9 +97,9 @@ onUnmounted(() => {
 })
 
 // Handle MIDI messages
-const handleMIDIMessage = (event: WebMidi.MIDIMessageEvent) => {
+const handleMIDIMessage = (event: MIDIMessageEvent) => {
+  if (event.data === null) return;
   const [status, note, velocity] = event.data
-  console.log('MIDI message:', status, note, velocity)
   // Note on (144-159) with velocity > 0
   if (status >= 144 && status <= 159 && velocity > 0) {
     console.log('Note on:', note, velocity)

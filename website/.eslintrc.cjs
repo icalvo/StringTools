@@ -9,6 +9,7 @@ module.exports = {
     '@vue/eslint-config-typescript',
     '@vue/eslint-config-prettier/skip-formatting'
   ],
+  ignorePatterns: ['node_modules', 'dist', 'public'],
   overrides: [
     {
       files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}'],
