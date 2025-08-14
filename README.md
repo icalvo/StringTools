@@ -5,7 +5,7 @@ This is the repository of [String Tools](https://stringinstrumenttools.netlify.a
 ## String Stops
 
 This tool calculates multiple-stop fingerings for the provided notes.
-![Screenshot](docs/img.png)
+![Screenshot](docs/screenshot.png)
 
 Features:
 - Four instruments: violin, viola, cello and double 5-string double bass.
