@@ -2,7 +2,7 @@
 
 This is the repository of [String Tools](https://stringinstrumenttools.netlify.app) site. It is built with Vue 3.
 
-## String stops calculator
+## String Stops
 
 This tool calculates multiple-stop fingerings for the provided notes.
 ![Screenshot](docs/img.png)
