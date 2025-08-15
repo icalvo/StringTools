@@ -1,3 +1,5 @@
 cd website
 npx lint-staged
 npm run test:commit
+cd ../packages/string-fingerings
+npm run test
