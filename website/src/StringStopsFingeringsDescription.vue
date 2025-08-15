@@ -35,9 +35,9 @@ const data = computed(() =>
   }))
 )
 
-function toggleAll(enabled: boolean) {
+function toggleAll(enabled: boolean|undefined) {
   ;[...Array(data.value.length).keys()].forEach((index) =>
-    fingeringsStore.toggleFingering(index, enabled)
+    fingeringsStore.toggleFingering(index, enabled ?? false)
   )
 }
 </script>

@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-const model = defineModel<boolean>('input')
+const model = defineModel<boolean>('input', { required: true })
 
 const props = defineProps<{
   id: string
