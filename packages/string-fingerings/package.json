@@ -26,7 +26,7 @@
   "homepage": "https://github.com/icalvo/StringTools#readme",
   "scripts": {
     "build": "tsc",
-    "dev": "vitest",
+    "dev": "vitest --printConsoleTrace=true",
     "ci": "npm run build",
     "check-format": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
@@ -39,6 +39,6 @@
     "@mxssfd/typedoc-theme": "^1.1.7",
     "typedoc": "^0.26.7",
     "typescript": "^5.5.4",
-    "vitest": "^2.1.1"
+    "vitest": "^3.2.4"
   }
 }
