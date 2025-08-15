@@ -1,5 +1,5 @@
 ﻿import { describe, expect, it } from 'vitest'
-import { abcnote, calculateFingerings, getStopRelPos, hasNoGaps, nn, noteName, noteNumber } from './fingerings.js'
+import { abcnote, calculateFingerings, fingeringHardness, getStopRelPos, hasNoGaps, nn, noteName, noteNumber } from './fingerings.js'
 
 describe('noteName', () => {
   it('return C4 for number 60', () => {
@@ -93,10 +93,8 @@ const violin = {
   name: 'Violin',
   stops: 24,
   scaleLength: 330,
-  image: 'violin_front.jpg',
-  clef: 'treble',
   hardStretch: 78,
-  maxStretch: 116,
+  maxStretch: 90,
   strings: [
     {
       name: 'G',
@@ -188,5 +186,14 @@ describe('calculateFingerings', () => {
           'stopIndex': 0
         }]
     ])
+  })
+})
+
+describe('fingeringHardness', () => {
+  it('Returns expected results', () => {
+    expect(fingeringHardness(violin, [
+      { stringIndex: 0, stopIndex: 9 },
+      { stringIndex: 1, stopIndex: 5 },
+      { stringIndex: 2, stopIndex: 2 }])).toBe(1.0)
   })
 })

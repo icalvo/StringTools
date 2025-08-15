@@ -3,7 +3,7 @@ import {computed} from 'vue'
 import {fingeringColor} from '@/data/presentation'
 import {useFingeringStore} from "@/stores/fingeringsStore";
 import { type UiString, useInstrumentsStore } from '@/stores/instrumentsStore'
-import {getStopRelPos, type InstrumentString} from "string-fingerings";
+import {getStopRelPos} from "string-fingerings";
 const props = defineProps<{
   instrumentIndex: number
   hideStrings?: boolean

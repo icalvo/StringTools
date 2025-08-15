@@ -1,4 +1,4 @@
-﻿import type { Instrument, InstrumentString, Stop } from './types.js'
+﻿import type {Instrument, InstrumentString, Stop, StopCalculationData} from './types.js'
 
 /**
  * Gets the MIDI note number from a text representation (middle C is 'C4')
@@ -148,7 +148,7 @@ function cross(addValidation: Function, l1: Stop[][], l2: Stop[]): Stop[][] {
   return l1.flatMap((i1) => l2.filter((i2) => addValidation(i1, i2)).map((i2) => i1.concat([i2])))
 }
 
-function fingeringStretch<TString extends InstrumentString>(instrument: Instrument<TString>, stop1: Stop, stop2: Stop): number {
+function fingeringStretch<TString extends InstrumentString>(instrument: Instrument<TString>, stop1: StopCalculationData, stop2: StopCalculationData): number {
   const stopRelPos1 = getStopRelPos(stop1.stopIndex)
   const stopRelPos2 = getStopRelPos(stop2.stopIndex)
   return instrument.scaleLength * Math.abs(stopRelPos2 - stopRelPos1)
@@ -164,47 +164,47 @@ Array.prototype.pairwise = function () {
   return this.slice(1).map((x, i) => [this[i], x])
 }
 
-function fingeringStretches<TString extends InstrumentString>(instrument: Instrument<TString>, stops: Stop[]): [Stop, number, Stop][] {
-  return stops
-    .pairwise()
-    .map(([stop1, stop2]) => [stop1, fingeringStretch(instrument, stop1, stop2), stop2])
-}
-
-function isOpenString(stop: Stop): boolean {
+function isOpenString(stop: StopCalculationData): boolean {
   return stop.stopIndex === 0
 }
 
 function stretchHardness<TString extends InstrumentString>(
-  instrument: Instrument<TString>,
-  stop1: Stop,
-  stretch: number,
-  stop2: Stop
+    instrument: Instrument<TString>,
+    stop1: StopCalculationData,
+    stop2: StopCalculationData,
+    multiplier: number
 ): number {
+  const stretch = fingeringStretch(instrument, stop1, stop2)
+  console.debug(`qwerStretch: ${stretch}`, stop1, stop2)
   if (isOpenString(stop1) || isOpenString(stop2)) {
     return 0.0
   }
 
-  if (stretch > instrument.maxStretch) {
+  if (stretch > instrument.maxStretch * multiplier) {
     return 1.0
   }
 
-  if (stretch > instrument.hardStretch) {
+  if (stretch > instrument.hardStretch * multiplier) {
     return 0.5
   }
 
   return 0.1
 }
 
-function stretchesHardness<TString extends InstrumentString>(instrument: Instrument<TString>, stretches: [Stop, number, Stop][]): number {
-  return stretches
-    .map(([stop1, stretch, stop2]) => stretchHardness(instrument, stop1, stretch, stop2))
-    .reduce((a, b) => Math.max(a, b))
-}
-
-function fingeringHardness<TString extends InstrumentString>(instrument: Instrument<TString>, fingering: Stop[]): number {
+export function fingeringHardness<TString extends InstrumentString>(instrument: Instrument<TString>, fingering: StopCalculationData[]): number {
   const sortedFingering = fingering.sort((s1, s2) => s1.stringIndex - s2.stringIndex)
-
-  return stretchesHardness(instrument, fingeringStretches(instrument, sortedFingering))
+  const stopPairs = sortedFingering.pairwise()
+  const sortedByStopIndex = sortedFingering.sort((s1, s2) => s1.stopIndex - s2.stopIndex)
+  const minStop = sortedByStopIndex[0]
+  if (!minStop) throw "minStop is undefined"
+  const maxStop = sortedByStopIndex[sortedByStopIndex.length - 1]
+  if (!maxStop) throw "maxStop is undefined"
+  const contiguousStretchHardnesses =
+      stopPairs
+          .map(([stop1, stop2]) => stretchHardness(instrument, stop1, stop2, 1))
+  const totalStretchHardness = stretchHardness(instrument, minStop, maxStop, 1.02)
+  const allStretchHardnesses = contiguousStretchHardnesses.concat(totalStretchHardness)
+  return Math.max(...allStretchHardnesses)
 }
 
 export function hasNoGaps(_instrument: any, fingering: {stringIndex: number}[]): boolean {

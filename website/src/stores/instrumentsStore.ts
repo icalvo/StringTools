@@ -35,7 +35,7 @@ const initialInstruments: UiInstrument[] = [
         image: 'violin_front.jpg',
         clef: 'treble',
         hardStretch: 78,
-        maxStretch: 116,
+        maxStretch: 90,
         strings: [
             {
                 name: 'G',
@@ -70,7 +70,7 @@ const initialInstruments: UiInstrument[] = [
         image: 'viola_front.jpg',
         clef: 'alto',
         hardStretch: 78,
-        maxStretch: 116,
+        maxStretch: 90,
         strings: [
             {
                 name: 'C',

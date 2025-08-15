@@ -1,11 +1,15 @@
 ﻿/** Represents a single fingering, either stopping or touching the string with one finger. */
-export interface Stop {
-  /** The string index in the instrument (0 = first string, etc.) */
-  stringIndex: number
+export interface StopCalculationData {
+    /** The string index in the instrument (0 = first string, etc.) */
+    stringIndex: number
+    /** The stepIndex (number of semitones over the open string) */
+    stopIndex: number
+}
+
+/** Represents a single fingering, either stopping or touching the string with one finger. */
+export interface Stop extends StopCalculationData {
   /** The MIDI note number (middle C = 60) */
   noteNumber: number
-  /** The stepIndex (number of semitones over the open string) */
-  stopIndex: number
   /** Is it touch fingering? */
   naturalHarmonic: boolean
 }
@@ -18,6 +22,7 @@ export interface InstrumentString {
     openNote: number
 }
 
+/** Represent a string instrument */
 export interface Instrument<TString extends InstrumentString> {
     /** Name of the instrument */
     name: string
