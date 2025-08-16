@@ -277,7 +277,7 @@ const initialInstruments: UiInstrument[] = [
                 name: 'G',
                 openNote: nn('G2'),
                 startPositionInImage: [302, 201],
-                endPositionInImage: [33, 978]
+                endPositionInImage: [333, 978]
             }
         ]
     },
@@ -355,7 +355,7 @@ const initialInstruments: UiInstrument[] = [
                 name: 'G',
                 openNote: nn('G2'),
                 startPositionInImage: [302, 201],
-                endPositionInImage: [33, 978]
+                endPositionInImage: [333, 978]
             }
         ]
     }
