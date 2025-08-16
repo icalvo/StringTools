@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - Added 16" and 15.5" violas (the present one was 16.5")
 - Added 3/4 5-string double bass (the present one was 4/4)
+- Added 4-string double bass, both 3/4 and 4/4
 
 ## [2025-08-15]
 ### Fixed

@@ -246,6 +246,42 @@ const initialInstruments: UiInstrument[] = [
         ]
     },
     {
+        name: 'Double bass (4 str. 3/4)',
+        stops: 24,
+        scaleLength: 1049,
+        image: 'bass4_front.jpg',
+        clef: 'bass',
+        hardStretch: 116,
+        maxStretch: 120,
+        transposition: 12,
+        strings: [
+            {
+                name: 'E',
+                openNote: nn('E1'),
+                startPositionInImage: [277, 201],
+                endPositionInImage: [265, 979]
+            },
+            {
+                name: 'A',
+                openNote: nn('A1'),
+                startPositionInImage: [284, 199],
+                endPositionInImage: [284, 979]
+            },
+            {
+                name: 'D',
+                openNote: nn('D2'),
+                startPositionInImage: [293, 200],
+                endPositionInImage: [310, 979]
+            },
+            {
+                name: 'G',
+                openNote: nn('G2'),
+                startPositionInImage: [302, 201],
+                endPositionInImage: [33, 978]
+            }
+        ]
+    },
+    {
         name: 'Double bass (5 str. 4/4)',
         stops: 24,
         scaleLength: 1100,
@@ -284,6 +320,42 @@ const initialInstruments: UiInstrument[] = [
                 openNote: nn('G2'),
                 startPositionInImage: [316, 182],
                 endPositionInImage: [347, 988]
+            }
+        ]
+    },
+    {
+        name: 'Double bass (4 str. 4/4)',
+        stops: 24,
+        scaleLength: 1100,
+        image: 'bass4_front.jpg',
+        clef: 'bass',
+        hardStretch: 116,
+        maxStretch: 120,
+        transposition: 12,
+        strings: [
+            {
+                name: 'E',
+                openNote: nn('E1'),
+                startPositionInImage: [277, 201],
+                endPositionInImage: [265, 979]
+            },
+            {
+                name: 'A',
+                openNote: nn('A1'),
+                startPositionInImage: [284, 199],
+                endPositionInImage: [284, 979]
+            },
+            {
+                name: 'D',
+                openNote: nn('D2'),
+                startPositionInImage: [293, 200],
+                endPositionInImage: [310, 979]
+            },
+            {
+                name: 'G',
+                openNote: nn('G2'),
+                startPositionInImage: [302, 201],
+                endPositionInImage: [33, 978]
             }
         ]
     }
