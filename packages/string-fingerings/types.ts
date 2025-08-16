@@ -20,6 +20,8 @@ export interface InstrumentString {
     name: string
     /** Open string note as a MIDI number (middle C = 60) */
     openNote: number
+    /** Additional open strings, as a MIDI number (for low range extensions) */
+    additionalOpenNotes?: number[]
 }
 
 /** Represent a string instrument */

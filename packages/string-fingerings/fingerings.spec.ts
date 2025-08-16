@@ -115,6 +115,33 @@ const violin = {
   ]
 }
 
+const bassExtension = {
+    name: 'Double bass with C-ext',
+    stops: 24,
+    scaleLength: 1049,
+    hardStretch: 116,
+    maxStretch: 120,
+    strings: [
+    {
+      name: 'E',
+      openNote: nn('E1'),
+      additionalOpenNotes: [nn('D#1'), nn('D1'), nn('C#1'), nn('C1')]
+    },
+    {
+      name: 'A',
+      openNote: nn('A1')
+    },
+    {
+      name: 'D',
+      openNote: nn('D2')
+    },
+    {
+      name: 'G',
+      openNote: nn('G2')
+    }
+  ]
+}
+
 describe('hasNoGaps', () => {
   it('Returns expected results', () => {
     expect(hasNoGaps(undefined, [
@@ -186,6 +213,22 @@ describe('calculateFingerings', () => {
           'stopIndex': 0
         }]
     ])
+  })
+  it('works with bass with c-extension', () => {
+    expect(calculateFingerings(bassExtension, [nn('D1'), nn('A1')], [], false)).toStrictEqual([
+      [{
+          'stringIndex': 0,
+          'noteNumber': nn('D1'),
+          'naturalHarmonic': false,
+          'stopIndex': -2
+        },
+        {
+          'stringIndex': 1,
+          'noteNumber': nn('A1'),
+          'naturalHarmonic': false,
+          'stopIndex': 0
+        }]
+      ])
   })
 })
 
