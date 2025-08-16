@@ -53,7 +53,7 @@ describe('StopsDiagram', () => {
         ]
       },
       props: {
-        instrumentIndex: 2
+        instrumentIndex: 4
       }
     })
     expect(wrapper.findAll("circle[class='fingering1']")).toHaveLength(2)
