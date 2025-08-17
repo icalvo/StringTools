@@ -76,8 +76,9 @@ function* stopsForString<TString extends InstrumentString>(
   if (!instrumentString) return;
   const openNote = instrumentString.openNote as number
   const stopIndex = noteNumber - openNote
+  const additionalOpenNotes = instrumentString.additionalOpenNotes ?? []
 
-  if (stopIndex < 0) {
+  if (stopIndex < 0 && !additionalOpenNotes.includes(noteNumber)) {
     console.debug(`${noteName(noteNumber)} is too low for ${instrumentString.name} string`)
     return
   }
@@ -165,7 +166,7 @@ Array.prototype.pairwise = function () {
 }
 
 function isOpenString(stop: StopCalculationData): boolean {
-  return stop.stopIndex === 0
+  return stop.stopIndex <= 0
 }
 
 function stretchHardness<TString extends InstrumentString>(
@@ -175,7 +176,7 @@ function stretchHardness<TString extends InstrumentString>(
     multiplier: number
 ): number {
   const stretch = fingeringStretch(instrument, stop1, stop2)
-  console.debug(`qwerStretch: ${stretch}`, stop1, stop2)
+  console.debug(`Stretch: ${stretch}`, stop1, stop2)
   if (isOpenString(stop1) || isOpenString(stop2)) {
     return 0.0
   }

@@ -1,5 +1,15 @@
 ﻿import { describe, expect, it } from 'vitest'
-import { abcnote, calculateFingerings, fingeringHardness, getStopRelPos, hasNoGaps, nn, noteName, noteNumber } from './fingerings.js'
+import {
+  abcnote,
+  calculateFingerings,
+  fingeringHardness,
+  getStopRelPos,
+  hasNoGaps,
+  hasPossibleStretch,
+  nn,
+  noteName,
+  noteNumber
+} from './fingerings.js'
 
 describe('noteName', () => {
   it('return C4 for number 60', () => {
@@ -34,7 +44,7 @@ describe('noteNumber', () => {
   })
   it('recognizes flat alteration', () => {
     expect(noteNumber('Bb3')).toBe(58)
-  })
+    })
   it('returns error message with empty string', () => {
     expect(noteNumber('')).to.be.a('string')
   })
@@ -94,7 +104,7 @@ const violin = {
   stops: 24,
   scaleLength: 330,
   hardStretch: 78,
-  maxStretch: 90,
+  maxStretch: 92,
   strings: [
     {
       name: 'G',
@@ -111,6 +121,33 @@ const violin = {
     {
       name: 'E',
       openNote: nn('E5'),
+    }
+  ]
+}
+
+const bassExtension = {
+    name: 'Double bass with C-ext',
+    stops: 24,
+    scaleLength: 1049,
+    hardStretch: 116,
+    maxStretch: 120,
+    strings: [
+    {
+      name: 'E',
+      openNote: nn('E1'),
+      additionalOpenNotes: [nn('D#1'), nn('D1'), nn('C#1'), nn('C1')]
+    },
+    {
+      name: 'A',
+      openNote: nn('A1')
+    },
+    {
+      name: 'D',
+      openNote: nn('D2')
+    },
+    {
+      name: 'G',
+      openNote: nn('G2')
     }
   ]
 }
@@ -186,6 +223,61 @@ describe('calculateFingerings', () => {
           'stopIndex': 0
         }]
     ])
+  })
+  it('works with bass with c-extension', () => {
+    expect(calculateFingerings(bassExtension, [nn('D1'), nn('A1')], [], false)).toStrictEqual([
+      [{
+        'stringIndex': 0,
+        'noteNumber': nn('D1'),
+        'naturalHarmonic': false,
+        'stopIndex': -2
+      },
+        {
+          'stringIndex': 1,
+          'noteNumber': nn('A1'),
+          'naturalHarmonic': false,
+          'stopIndex': 0
+        }]
+    ])
+    expect(calculateFingerings(bassExtension, [nn('B0'), nn('A1')], [], false)).toStrictEqual([
+      ])
+  })
+  it('discards reported impossible cases', () => {
+    expect(calculateFingerings(
+        violin,
+        [nn('E4'), nn('G4'), nn('B4')],
+        [hasPossibleStretch],
+        false)).toStrictEqual([])
+    expect(calculateFingerings(
+        violin,
+        [nn('E4'), nn('G4'), nn('A#4')],
+        [hasPossibleStretch],
+        false)).toStrictEqual([])
+    expect(calculateFingerings(
+        violin,
+        [nn('F4'), nn('G#4'), nn('A#4')],
+        [hasPossibleStretch],
+        false)).toStrictEqual([])
+  })
+  it('accepts reported possible cases', () => {
+    expect(calculateFingerings(
+        violin, 
+        [nn('A#4'), nn('B5')], 
+        [hasPossibleStretch], 
+        false)).toContainEqual(
+        [{
+          'stringIndex': 2,
+          'noteNumber': nn('A#4'),
+          'naturalHarmonic': false,
+          'stopIndex': 1
+        },
+          {
+            'stringIndex': 3,
+            'noteNumber': nn('B5'),
+            'naturalHarmonic': false,
+            'stopIndex': 7
+          }]
+    )
   })
 })
 
