@@ -2,8 +2,9 @@
 import {computed} from 'vue'
 import {fingeringColor} from '@/data/presentation'
 import {useFingeringStore} from "@/stores/fingeringsStore";
-import { type UiString, useInstrumentsStore } from '@/stores/instrumentsStore'
+import {type UiString, useInstrumentsStore} from '@/stores/instrumentsStore'
 import {getStopRelPos} from "string-fingerings";
+
 const props = defineProps<{
   instrumentIndex: number
   hideStrings?: boolean
@@ -28,8 +29,8 @@ const stops = computed(() =>
           y: stopAbsPos.y,
           r: hardFingering ? 4 : 8,
           color: fingeringColor(fingeringsStore.fingeringToggles.length, fingeringIndex),
-          isOpen: s.stopIndex === 0,
-          isStopped: s.stopIndex !== 0 && !s.naturalHarmonic,
+          isOpen: s.stopIndex <= 0,
+          isStopped: s.stopIndex > 0 && !s.naturalHarmonic,
           isNaturalHarmonic: s.naturalHarmonic
         }
       })
@@ -40,19 +41,23 @@ const strings = computed(() =>
       sx: string.startPositionInImage[0],
       sy: string.startPositionInImage[1],
       ex: string.endPositionInImage[0],
-      ey: string.endPositionInImage[1]
+      ey: string.endPositionInImage[1],
+      additionalStops: string.additionalOpenNotes?.map((openNote) => openNote - string.openNote) ?? [],
     }))
 )
 
 const allStops = computed(() =>
     strings.value.flatMap((string) =>
-        [...Array(instrument.value.stops + 1).keys()].map((stopIndex) => {
-          const stopRelPos = getStopRelPos(stopIndex)
-          const stopX = string.sx + (string.ex - string.sx) * stopRelPos
-          const stopY = string.sy + (string.ey - string.sy) * stopRelPos
-          return {x: stopX, y: stopY}
-        })
-    )
+    {
+      return [...Array(instrument.value.stops + 1).keys()]
+            .concat(...string.additionalStops)
+            .map((stopIndex) => {
+                const stopRelPos = getStopRelPos(stopIndex)
+                const stopX = string.sx + (string.ex - string.sx) * stopRelPos
+                const stopY = string.sy + (string.ey - string.sy) * stopRelPos
+                return {x: stopX, y: stopY}
+            })
+    })
 )
 
 function getStopAbsPos(string: UiString, stopRelPos: number) {
