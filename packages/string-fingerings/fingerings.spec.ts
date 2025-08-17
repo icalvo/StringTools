@@ -1,5 +1,15 @@
 ﻿import { describe, expect, it } from 'vitest'
-import { abcnote, calculateFingerings, fingeringHardness, getStopRelPos, hasNoGaps, nn, noteName, noteNumber } from './fingerings.js'
+import {
+  abcnote,
+  calculateFingerings,
+  fingeringHardness,
+  getStopRelPos,
+  hasNoGaps,
+  hasPossibleStretch,
+  nn,
+  noteName,
+  noteNumber
+} from './fingerings.js'
 
 describe('noteName', () => {
   it('return C4 for number 60', () => {
@@ -34,7 +44,7 @@ describe('noteNumber', () => {
   })
   it('recognizes flat alteration', () => {
     expect(noteNumber('Bb3')).toBe(58)
-  })
+    })
   it('returns error message with empty string', () => {
     expect(noteNumber('')).to.be.a('string')
   })
@@ -217,17 +227,19 @@ describe('calculateFingerings', () => {
   it('works with bass with c-extension', () => {
     expect(calculateFingerings(bassExtension, [nn('D1'), nn('A1')], [], false)).toStrictEqual([
       [{
-          'stringIndex': 0,
-          'noteNumber': nn('D1'),
-          'naturalHarmonic': false,
-          'stopIndex': -2
-        },
+        'stringIndex': 0,
+        'noteNumber': nn('D1'),
+        'naturalHarmonic': false,
+        'stopIndex': -2
+      },
         {
           'stringIndex': 1,
           'noteNumber': nn('A1'),
           'naturalHarmonic': false,
           'stopIndex': 0
         }]
+    ])
+    expect(calculateFingerings(bassExtension, [nn('B0'), nn('A1')], [], false)).toStrictEqual([
       ])
   })
 })
