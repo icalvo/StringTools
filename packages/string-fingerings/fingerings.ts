@@ -83,7 +83,7 @@ function* stopsForString<TString extends InstrumentString>(
     return
   }
 
-  if (stopIndex > instrument.stops) {
+  if (stopIndex > (instrumentString.stops ?? instrument.stops)) {
     console.debug(`${noteName(noteNumber)} is too high to stop for ${instrumentString.name} string`)
   }
   else {

@@ -22,6 +22,8 @@ export interface InstrumentString {
     openNote: number
     /** Additional open strings, as a MIDI number (for low range extensions) */
     additionalOpenNotes?: number[]
+    /** Maximum number of semitones that can be stopped over the open string */
+    stops?: number
 }
 
 /** Represent a string instrument */
