@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+## [2025-08-26]
+- Preserve alterations for manually written notes, also in the score view.
+
 ## [2025-08-16]
 ### Added
 - Added 16" and 15.5" violas (the present one was 16.5")
