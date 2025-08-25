@@ -1,4 +1,14 @@
-﻿/** Represents a single fingering, either stopping or touching the string with one finger. */
+﻿/** Represents a note with a specific enharmonic representation */
+export interface Note {
+    name: 'A'|'B'|'C'|'D'|'E'|'F'|'G'
+    octave: number
+    alteration: '#'|'b'|'x'|'bb'|''
+    number: number
+    text: () => string
+    abcnote: () => string
+}
+
+/** Represents a single fingering, either stopping or touching the string with one finger. */
 export interface StopCalculationData {
     /** The string index in the instrument (0 = first string, etc.) */
     stringIndex: number
@@ -22,6 +32,8 @@ export interface InstrumentString {
     openNote: number
     /** Additional open strings, as a MIDI number (for low range extensions) */
     additionalOpenNotes?: number[]
+    /** Maximum number of semitones that can be stopped over the open string */
+    stops?: number
 }
 
 /** Represent a string instrument */

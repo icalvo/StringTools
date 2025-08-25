@@ -5,6 +5,7 @@ import { useFingeringStore } from '@/stores/fingeringsStore'
 import ScoreDisplay from '@/components/ScoreDisplay.vue'
 import ToggleBase from '@/components/ToggleBase.vue'
 import type { UiInstrument } from '@/stores/instrumentsStore'
+import { parse, noteName } from 'string-fingerings'
 
 const props = defineProps<{
   instrument: UiInstrument
@@ -71,14 +72,14 @@ function toggleAll(enabled: boolean|undefined) {
             </li>
           </ul>
         </div>
-        <div>
-          <ScoreDisplay
-            v-if="f.hasHarmonics"
-            :notes="f.stops.map((s) => ({ note: s.note, harmonic: s.isHarmonic }))"
-            :instrument="instrument"
-            :scale="1"
-          />
-        </div>
+<!--        <div>-->
+<!--          <ScoreDisplay-->
+<!--            v-if="f.hasHarmonics"-->
+<!--            :notes="f.stops.map((s) => ({ note: parse(noteName(s.note)), harmonic: s.isHarmonic }))"-->
+<!--            :instrument="instrument"-->
+<!--            :scale="1"-->
+<!--          />-->
+<!--        </div>-->
       </div>
     </div>
     <div v-if="data.length === 0">No fingerings found.</div>

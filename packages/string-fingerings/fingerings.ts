@@ -1,35 +1,82 @@
-﻿import type {Instrument, InstrumentString, Stop, StopCalculationData} from './types.js'
+﻿import type {Instrument, InstrumentString, Note, Stop, StopCalculationData} from './types.js'
+class NoteImpl implements Note {
+    constructor(
+        public name: Note['name'],
+        public octave: Note['octave'],
+        public alteration: Note['alteration'],
+        public number: Note['number']
+    ) {}
+    text() {
+        return this.name + this.alteration + (this.octave -1)
+    }
 
+    abcnote(): string {
+        let noteName = this.name.toLowerCase()
+        let alteration = ''
+        switch (this.alteration) {
+            case '#': alteration = '^'; break
+            case 'b': alteration = '_'; break
+            case 'x': alteration = '^^'; break
+            case 'bb': alteration = '__'; break
+            case '': alteration = ''; break
+        }
+        const octave = this.octave
+        let ticks: number
+        if (octave <= 5) {
+            noteName = noteName.toUpperCase()
+            ticks = 5 - octave
+            return `${alteration}${noteName}${','.repeat(ticks)}`
+        } else {
+            ticks = octave - 6
+            return `${alteration}${noteName}${"'".repeat(ticks)}`
+        }
+    }
+}
+export function tryParse(noteText: string): Note | string {
+    noteText = noteText.trim()
+    if (noteText.length < 2) return 'Note names must be at least two characters long'
+    if (noteText.length > 4) return 'Note names must be at most four characters long'
+    const firstChar = noteText.charAt(0).toUpperCase()
+    const lastChar = noteText.charAt(noteText.length - 1)
+    if (firstChar < 'A' || firstChar > 'G') return 'First char must be A-G'
+    if (lastChar < '0' || lastChar > '9') return 'Last char must be a number'
+    const octave = parseInt(lastChar)
+    if (isNaN(octave)) return 'Last char must be a number'
+    const alteration = noteText.substring(1, noteText.length - 1)
+    let alterationOffset = 0
+    switch (alteration) {
+        case 'bb': alterationOffset = -2; break
+        case 'x': alterationOffset = 2; break
+        case 'b': alterationOffset = -1; break
+        case '#': alterationOffset = 1; break
+        case '': alterationOffset = 0; break
+        default: return 'Second char must be #, b, x or bb. Text: ' + noteText + ', alteration: ' + alteration
+    }
+    const noteIndex = (firstChar.charCodeAt(0) - 67 + 7) % 7
+    const semitoneIndex = [0, 2, 4, 5, 7, 9, 11]
+    const number = 
+        (semitoneIndex[noteIndex] ?? NaN) + alterationOffset + (octave + 1) * 12
+    return new NoteImpl(
+        firstChar as Note['name'],
+        octave + 1,
+        alteration as Note['alteration'],
+        number
+    )
+}
+export function parse(noteText: string): Note {
+    const result = tryParse(noteText)
+    if (typeof result === 'string') throw result
+    return result
+}
 /**
  * Gets the MIDI note number from a text representation (middle C is 'C4')
  * @param noteName Can include sharp (#) and flat (b) alterations, like Db5 or F#2.
  * @returns The MIDI note number or a string with an explanatory error message.
  */
 export function noteNumber(noteName: string): number | string {
-  noteName = noteName.trim()
-  if (noteName.length < 2) return 'Note names must be at least two characters long'
-  let pointer = 0
-  const firstChar = noteName.charAt(pointer).toUpperCase().charCodeAt(0)
-  if (firstChar < 65 || firstChar > 65 + 7) return 'First char must be ABCDEFG'
-
-  const noteIndex = (firstChar - 67 + 7) % 7
-  const semitoneIndex = [0, 2, 4, 5, 7, 9, 11]
-
-  pointer++
-  let alteration = 0
-  if (noteName.charAt(pointer) === '#') {
-    alteration = 1
-    pointer++
-  } else if (noteName.charAt(pointer) === 'b') {
-    alteration = -1
-    pointer++
-  }
-  const octave = parseInt(noteName.charAt(pointer))
-  if (isNaN(octave)) return 'Last char must be a number'
-  pointer++
-  if (pointer !== noteName.length) return 'Note name has extra characters'
-
-  return (semitoneIndex[noteIndex] ?? NaN) + alteration + (octave + 1) * 12
+    const n = tryParse(noteName)
+    if (typeof n === 'string') return n
+    return n.number
 }
 
 export function nn(noteName: string) {
@@ -50,19 +97,7 @@ export function noteName(noteNumber: number): string {
 }
 
 export function abcnote(noteNumber: number): string {
-    const noteIndex = noteNumber % 12
-    let noteName = ['c', 'c', 'd', 'd', 'e', 'f', 'f', 'g', 'g', 'a', 'a', 'b'][noteIndex] ?? ""
-    const alteration = ['', '^', '', '^', '', '', '^', '', '^', '', '^', ''][noteIndex] ?? ""
-    const octave = Math.floor(noteNumber / 12)
-    let ticks: number
-    if (octave <= 5) {
-        noteName = noteName.toUpperCase()
-        ticks = 5 - octave
-        return `${alteration}${noteName}${','.repeat(ticks)}`
-    } else {
-        ticks = octave - 6
-        return `${alteration}${noteName}${"'".repeat(ticks)}`
-    }
+    return parse(noteName(noteNumber)).abcnote()
 }
 
 function* stopsForString<TString extends InstrumentString>(
@@ -83,7 +118,7 @@ function* stopsForString<TString extends InstrumentString>(
     return
   }
 
-  if (stopIndex > instrument.stops) {
+  if (stopIndex > (instrumentString.stops ?? instrument.stops)) {
     console.debug(`${noteName(noteNumber)} is too high to stop for ${instrumentString.name} string`)
   }
   else {

@@ -1,14 +1,14 @@
 ﻿import { describe, expect, it } from 'vitest'
 import {
-  abcnote,
-  calculateFingerings,
-  fingeringHardness,
-  getStopRelPos,
-  hasNoGaps,
-  hasPossibleStretch,
-  nn,
-  noteName,
-  noteNumber
+    abcnote,
+    calculateFingerings,
+    fingeringHardness,
+    getStopRelPos,
+    hasNoGaps,
+    hasPossibleStretch,
+    nn,
+    noteName,
+    noteNumber, parse
 } from './fingerings.js'
 
 describe('noteName', () => {
@@ -38,6 +38,12 @@ describe('noteNumber', () => {
   })
   it('recognizes lower case note names', () => {
     expect(noteNumber('d4')).toBe(62)
+  })
+  it('recognizes double flat alteration', () => {
+    expect(noteNumber('Cbb4')).toBe(58)
+  })
+  it('recognizes double sharp alteration', () => {
+    expect(noteNumber('Cx4')).toBe(62)
   })
   it('recognizes sharp alteration', () => {
     expect(noteNumber('C#4')).toBe(61)
@@ -90,8 +96,8 @@ describe('abcnote', () => {
     ['^C', (12 * 5) + 1],
     ['B,', 12 * 5 - 1],
     ['c', 12 * 6],
-    ['c\'', 12 * 7],
-    ['c\'\'', 12 * 8],
+    ["c'", 12 * 7],
+    ["c''", 12 * 8],
     ['C,', 12 * 4],
     ['C,,', 12 * 3]
   ])('returns %s for %i', (expected, midiNumber) => {
@@ -99,6 +105,21 @@ describe('abcnote', () => {
   })
 })
 
+describe('Note.abcnote', () => {
+    it.each([
+        ['C', parse('C4')],
+        ['^C', parse('C#4')],
+        ['_C', parse('Cb4')],
+        ['B,', parse('B3')],
+        ['c', parse('C5')],
+        ["c'", parse('C6')],
+        ["c''", parse('C7')],
+        ['C,', parse('C3')],
+        ['C,,', parse('C2')]
+    ])('returns %s for %o', (expected, midiNumber) => {
+        expect(midiNumber.abcnote()).toBe(expected)
+    })
+})
 const violin = {
   name: 'Violin',
   stops: 24,
