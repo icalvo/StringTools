@@ -1,11 +1,12 @@
 ﻿<script setup lang="ts">
 
+import type { Note } from 'string-fingerings'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { noteName, noteNumber } from 'string-fingerings'
+import { noteName, tryParse } from 'string-fingerings'
 
-const notes = defineModel<number[]>()
+const notes = defineModel<Note[]>()
 
-const notesToRepr = computed(() => notes.value?.map((n) => noteName(n)).join(' ') ?? '')
+const notesToRepr = computed(() => notes.value?.map((n) => n.text()).join(' ') ?? '')
 const representation = ref('')
 const connectedPorts = ref<Set<string>>(new Set())
 const midiEnabled = computed(() => connectedPorts.value.size > 0)
@@ -14,22 +15,22 @@ const activeNotes = ref<Set<number>>(new Set())
 const pressedNotes = ref<Set<number>>(new Set())
 
 const reprToNotes = computed(() => {
-  const noteNumbers = representation.value
+  const parsedNotes = representation.value
     .split(' ')
     .filter((s) => s !== '')
-    .map((noteName) => ({ noteName, noteNumber: noteNumber(noteName) }))
+    .map((noteName) => ({ noteName, note: tryParse(noteName) }))
 
-  for (const result of noteNumbers) {
-    if (typeof result.noteNumber === 'string') {
-      for (const r2 of noteNumbers.filter((r) => typeof r.noteNumber === 'string')) {
-        console.log(`${r2.noteName} is invalid: ${r2.noteNumber}`)
+  for (const result of parsedNotes) {
+    if (typeof result.note === 'string') {
+      for (const r2 of parsedNotes.filter((r) => typeof r.note === 'string')) {
+        console.log(`${r2.noteName} is invalid: ${r2.note}`)
       }
 
       return []
     }
   }
 
-  return noteNumbers.map((r) => r.noteNumber).filter((f) => typeof f === 'number')
+  return parsedNotes.map((r) => r.note as Note)
 })
 
 watch(notesToRepr, (newValue) => {

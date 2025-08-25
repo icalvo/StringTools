@@ -1,4 +1,5 @@
 ﻿<script setup lang="ts">
+import type { Note } from 'string-fingerings'
 import { abcnote } from 'string-fingerings'
 import { renderAbc } from 'abcjs'
 import {computed, useTemplateRef, watch} from 'vue'
@@ -10,7 +11,7 @@ const instruments = instrumentsStore.instruments
 
 const props = withDefaults(
     defineProps<{
-      notes: {note:number,harmonic:boolean}[] | null
+      notes: {note:Note,harmonic:boolean}[] | null
       instrument: number | UiInstrument
       scale?: number
     }>(),
@@ -20,17 +21,17 @@ const instrument = computed(() =>
     typeof props.instrument === "number"
     ? instruments[props.instrument]
     : props.instrument)
-function showScore(target: HTMLElement, notes: {note:number,harmonic:boolean}[], instrument: UiInstrument) {
+function showScore(target: HTMLElement, notes: {note:Note,harmonic:boolean}[], instrument: UiInstrument) {
   const lowestNote = instrument.strings.reduce((prev, curr) => Math.min(prev, curr.openNote), 1000)
   const highestNote = instrument.strings.reduce(
     (prev, curr) => Math.max(prev, curr.openNote + instrument.stops),
     0
   )
-  if (notes.some((n) => n.note < lowestNote || n.note > highestNote)) {
+  if (notes.some((n) => n.note.number < lowestNote || n.note.number > highestNote)) {
     notes = []
   }
 
-  const abcnotes = notes.map(n => ({note:n.note, hst:n.harmonic?'!style=harmonic!':''})).map((n) => `${n.hst}${abcnote(n.note)}`).join('')
+  const abcnotes = notes.map(n => ({note:n.note, hst:n.harmonic?'!style=harmonic!':''})).map((n) => `${n.hst}${n.note.abcnote()}`).join('')
   const score = `X:1/4\nK:C ${instrument.clef}\n[${abcnotes}]2`
   const visualOptions = {
     scale: props.scale,

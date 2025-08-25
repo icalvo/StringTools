@@ -4,7 +4,9 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "web": "cd website && npm run dev",
+    "test": "cd packages/string-fingerings && npm run dev"
   },
   "keywords": [],
   "author": "",

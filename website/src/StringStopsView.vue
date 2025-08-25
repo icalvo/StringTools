@@ -8,13 +8,13 @@ import FingeringsDescription from '@/StringStopsFingeringsDescription.vue'
 import { useFingeringStore } from '@/stores/fingeringsStore'
 import CheckboxBase from '@/components/CheckboxBase.vue'
 import { useInstrumentsStore } from '@/stores/instrumentsStore'
-import { calculateFingerings, hasNoGaps, hasPossibleStretch } from 'string-fingerings'
+import { parse, calculateFingerings, hasNoGaps, hasPossibleStretch } from 'string-fingerings'
 
 const fingeringsStore = useFingeringStore()
 const instrumentsStore = useInstrumentsStore()
 
 const selectedInstrument = ref(0)
-const parsedNotes = ref([55, 62])
+const parsedNotes = ref([parse('G3'), parse('D4')])
 const validateNoGaps = ref(true)
 const validatePossibleStretch = ref(true)
 const includeNaturalHarmonics = ref(false)
@@ -38,7 +38,7 @@ watch(
 
     const newFingerings = calculateFingerings(
       inst,
-      rparsedNotes,
+      rparsedNotes.map((n) => n.number) as number[],
       validations,
       rincludeNaturalHarmonics
     )
