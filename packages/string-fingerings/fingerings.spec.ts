@@ -39,6 +39,12 @@ describe('noteNumber', () => {
   it('recognizes lower case note names', () => {
     expect(noteNumber('d4')).toBe(62)
   })
+  it('recognizes double flat alteration', () => {
+    expect(noteNumber('Cbb4')).toBe(58)
+  })
+  it('recognizes double sharp alteration', () => {
+    expect(noteNumber('Cx4')).toBe(62)
+  })
   it('recognizes sharp alteration', () => {
     expect(noteNumber('C#4')).toBe(61)
   })

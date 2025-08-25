@@ -46,7 +46,7 @@ export function tryParse(noteText: string): Note | string {
     let alterationOffset = 0
     switch (alteration) {
         case 'bb': alterationOffset = -2; break
-        case 'x': alterationOffset = 1; break
+        case 'x': alterationOffset = 2; break
         case 'b': alterationOffset = -1; break
         case '#': alterationOffset = 1; break
         case '': alterationOffset = 0; break
