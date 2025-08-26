@@ -4,9 +4,9 @@ import type { Note } from 'string-fingerings'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { noteName, tryParse } from 'string-fingerings'
 
-const notes = defineModel<Note[]>()
+const note = defineModel<Note>()
 
-const notesToRepr = computed(() => notes.value?.map((n) => n.text()).join(' ') ?? '')
+const notesToRepr = computed(() => note.value?.text())
 const representation = ref('')
 const connectedPorts = ref<Set<string>>(new Set())
 const midiEnabled = computed(() => connectedPorts.value.size > 0)
@@ -15,36 +15,29 @@ const activeNotes = ref<Set<number>>(new Set())
 const pressedNotes = ref<Set<number>>(new Set())
 
 const reprToNotes = computed(() => {
-  const parsedNotes = representation.value
-    .split(' ')
-    .filter((s) => s !== '')
-    .map((noteName) => ({ noteName, note: tryParse(noteName) }))
+  const result = { noteName: representation.value, note: tryParse(representation.value) }
 
-  for (const result of parsedNotes) {
-    if (typeof result.note === 'string') {
-      for (const r2 of parsedNotes.filter((r) => typeof r.note === 'string')) {
-        console.log(`${r2.noteName} is invalid: ${r2.note}`)
-      }
+  if (typeof result.note === 'string') {
+      console.log(`${result.noteName} is invalid: ${result.note}`)
 
-      return []
-    }
+    return undefined
   }
 
-  return parsedNotes.map((r) => r.note as Note)
+  return result.note as Note
 })
 
 watch(notesToRepr, (newValue) => {
   console.log('Updating representation with ', newValue)
-  if (newValue.length > 0) representation.value = newValue
+  if (newValue) representation.value = newValue
 })
 
 watch(reprToNotes, (newValue) => {
-  console.debug('Updating notes with ', newValue)
-  notes.value = newValue
+  console.debug('Updating note with ', newValue)
+  note.value = newValue
 })
 
 onMounted(() => {
-  representation.value = notesToRepr.value
+  representation.value = notesToRepr.value ?? ''
 
   // Initialize MIDI if available in the browser
   if (navigator.requestMIDIAccess) {
@@ -104,39 +97,14 @@ const handleMIDIMessage = (event: MIDIMessageEvent) => {
   // Note on (144-159) with velocity > 0
   if (status >= 144 && status <= 159 && velocity > 0) {
     console.log('Note on:', note, velocity)
-    activeNotes.value.add(note)
-    pressedNotes.value.add(note)
-  }
-  // Note off (128-143) or note on with velocity 0
-  else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
-    console.log('Note off:', note, velocity)
-    activeNotes.value.delete(note)
-
-    // If all keys are released, update the representation
-    if (activeNotes.value.size === 0) {
-      updateRepresentationFromMidi()
-    }
+    updateRepresentationFromMidi(note)
   }
 }
 
 // Update representation with MIDI notes
-const updateRepresentationFromMidi = () => {
+function updateRepresentationFromMidi(note: number) {
   // TODO: update value only when input is focused
-  // Convert MIDI note numbers to note names (e.g., C5)
-  const noteNames = Array.from(pressedNotes.value)
-    .sort((a, b) => a - b) // Sort notes from lowest to highest
-    .map((noteNum) => {
-      const name = noteName(noteNum)
-      return name ? name.toUpperCase() : ''
-    })
-    .filter((name) => name !== '')
-  pressedNotes.value.clear()
-  // Update the representation and trigger the model update
-  if (noteNames.length > 0) {
-    const newRep = noteNames.join(' ')
-    console.log('Updating representation from MIDI:', newRep)
-    representation.value = newRep
-  }
+  representation.value = noteName(note) ?? ''
 }
 </script>
 
