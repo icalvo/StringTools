@@ -22,7 +22,10 @@ const instrument = computed(() =>
     ? instruments[props.instrument]
     : props.instrument)
 function showScore(target: HTMLElement, notes: {note:Note,harmonic:boolean}[], instrument: UiInstrument) {
-  const lowestNote = instrument.strings.reduce((prev, curr) => Math.min(prev, curr.openNote), 1000)
+  const lowestNote = instrument.strings.reduce((prev, curr) => {
+    const additionalOpenNotes = curr.additionalOpenNotes ?? []
+    return Math.min(prev, curr.openNote, ...additionalOpenNotes);
+  }, 1000)
   const highestNote = instrument.strings.reduce(
     (prev, curr) => Math.max(prev, curr.openNote + instrument.stops),
     0
