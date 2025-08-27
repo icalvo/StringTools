@@ -296,7 +296,7 @@ const initialInstruments: UiInstrument[] = [
                 openNote: nn('E1'),
                 startPositionInImage: [293, 216],
                 endPositionInImage: [275, 979],
-                additionalOpenNotes: [nn('D#1'), nn('D1'), nn('C#1'), nn('C1')]
+                additionalOpenSemitones: [-1,-2,-3,-4],
             },
             {
                 name: 'A',
@@ -411,7 +411,7 @@ const initialInstruments: UiInstrument[] = [
                 openNote: nn('E1'),
                 startPositionInImage: [293, 216],
                 endPositionInImage: [275, 979],
-                additionalOpenNotes: [nn('D#1'), nn('D1'), nn('C#1'), nn('C1')]
+                additionalOpenSemitones: [-1,-2,-3,-4],
             },
             {
                 name: 'A',

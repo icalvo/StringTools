@@ -109,17 +109,17 @@ function* stopsForString<TString extends InstrumentString>(
   console.debug(`Calculating stop for note ${noteNumber} on string ${stringIndex}`)
   const instrumentString = instrument.strings[stringIndex]
   if (!instrumentString) return;
-  const openNote = instrumentString.openNote as number
+  const openNote = instrumentString.openNote.number
   const stopIndex = noteNumber - openNote
   const additionalOpenSemitones = instrumentString.additionalOpenSemitones ?? []
   const additionalOpenNotes = additionalOpenSemitones.map((s) => s + openNote)
   if (stopIndex < 0 && !additionalOpenNotes.includes(noteNumber)) {
-    console.debug(`${noteName(noteNumber)} is too low for ${instrumentString.name} string`)
+    console.debug(`${noteName(noteNumber)} is too low for ${instrumentString.openNote.name} string`)
     return
   }
 
   if (stopIndex > (instrumentString.stops ?? instrument.stops)) {
-    console.debug(`${noteName(noteNumber)} is too high to stop for ${instrumentString.name} string`)
+    console.debug(`${noteName(noteNumber)} is too high to stop for ${instrumentString.openNote.name} string`)
   }
   else {
     yield { stringIndex, noteNumber, stopIndex, naturalHarmonic: false }
