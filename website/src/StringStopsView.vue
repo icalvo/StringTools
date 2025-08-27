@@ -99,21 +99,21 @@ watch(
             <CheckboxBase
               id="validateNoGaps"
               v-model="validateNoGaps"
-            >No gaps <InfoOverlay>
+            >No gaps&nbsp;<InfoOverlay>
               <p class="mb-3">If checked, fingerings with gaps (i.e. where at least one string not played in the middle) will be filtered out.</p>
               <p class="mb-3">Fingerings with gaps are typically used for pizzicato playing. When using the bow, they cannot be played without stopping the sound, so they are better written separately, with or without grace notes.</p>
             </InfoOverlay></CheckboxBase>
             <CheckboxBase
               id="validatePossibleStretch"
               v-model="validatePossibleStretch"
-            >Discard impossible fingerings<InfoOverlay>
+            >Discard impossible fingerings&nbsp;<InfoOverlay>
               <p class="mb-3">This discard some impossible fingerings. The algorithm is simple so it cannot discard all of them.</p>
               <p class="mb-3">Currently, it discards the fingering if it has stretches greater than ${{instrument.maxStretch}}mm between contiguous strings. It also checks that the stretch between the highest and the lowest stop cannot be greater than {{instrument.maxStretch * 1.02}}mm.</p>
             </InfoOverlay></CheckboxBase>
             <CheckboxBase
               id="includeNaturalHarmonics"
               v-model="includeNaturalHarmonics"
-            ><InfoOverlay>
+            >Natural harmonics&nbsp;<InfoOverlay>
               <p class="mb-3">If checked, fingerings with natural harmonics will be included.</p>
             </InfoOverlay></CheckboxBase>
           </div>
