@@ -36,3 +36,4 @@ playwright-report/
 
 # .NET folders
 obj
+*.user
