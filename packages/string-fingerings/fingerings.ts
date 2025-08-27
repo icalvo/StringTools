@@ -111,8 +111,8 @@ function* stopsForString<TString extends InstrumentString>(
   if (!instrumentString) return;
   const openNote = instrumentString.openNote as number
   const stopIndex = noteNumber - openNote
-  const additionalOpenNotes = instrumentString.additionalOpenNotes ?? []
-
+  const additionalOpenSemitones = instrumentString.additionalOpenSemitones ?? []
+  const additionalOpenNotes = additionalOpenSemitones.map((s) => s + openNote)
   if (stopIndex < 0 && !additionalOpenNotes.includes(noteNumber)) {
     console.debug(`${noteName(noteNumber)} is too low for ${instrumentString.name} string`)
     return

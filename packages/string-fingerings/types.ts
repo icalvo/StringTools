@@ -31,9 +31,7 @@ export interface InstrumentString {
     /** Open string note as a MIDI number (middle C = 60) */
     openNote: number
     /** Additional open strings, as semitone offsets from the open string */
-    additionalOpenSemitones: number[]
-    /** Additional open strings, as a MIDI number (for low range extensions) */
-    additionalOpenNotes?: number[]
+    additionalOpenSemitones?: number[]
     /** Maximum number of semitones that can be stopped over the open string */
     stops?: number
 }
