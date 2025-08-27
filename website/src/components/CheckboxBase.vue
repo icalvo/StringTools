@@ -2,7 +2,7 @@
 const model =  defineModel<boolean>({ required: true })
 const props = defineProps<{
   id: string
-  label: string
+  label?: string
 }>()
 
 </script>
@@ -17,7 +17,7 @@ const props = defineProps<{
           class="h-5 w-5 cursor-pointer transition-all rounded shadow hover:shadow-md border border-slate-300 checked:bg-slate-800 checked:border-slate-800" />
     </div>
     <label class="cursor-pointer ml-2 text-slate-600 text-sm" :for="id">
-      {{ props.label }}
+      <slot>{{props.label}}</slot>
     </label>
   </div>
 </template>
