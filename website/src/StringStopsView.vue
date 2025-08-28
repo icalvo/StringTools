@@ -55,7 +55,7 @@ watch(
       <div class="flex-initial basis-1/2 p-4 text-wrap overflow-y-auto">
         <h2 class="view-title">String Stops</h2>
         <div>
-          <div class="flex flex-row flex-wrap items-center gap-4">
+          <div class="flex flex-row flex-wrap items-end gap-4">
             <div>
               <label for="instrument" class="font-bold text-gray-500">Instrument</label>
               <InstrumentSelector
