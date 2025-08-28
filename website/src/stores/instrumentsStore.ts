@@ -26,7 +26,13 @@ export const useInstrumentsStore = defineStore('instruments', {
         },
         changeOpenNote(instrumentIndex: number, stringIndex: number, openNote: Note) {
             this.instruments[instrumentIndex].strings[stringIndex].openNote = openNote
-        }
+        },
+        changeHighestNote(instrumentIndex: number, stringIndex: number, highestNote: Note) {
+            const string = this.instruments[instrumentIndex].strings[stringIndex]
+            const newStops = highestNote.number - string.openNote.number
+            if (newStops > 0 && newStops <= this.instruments[instrumentIndex].stops)
+                string.stops = newStops
+        },
     },
 })
 
