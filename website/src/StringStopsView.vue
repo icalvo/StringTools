@@ -9,6 +9,7 @@ import { useFingeringStore } from '@/stores/fingeringsStore'
 import CheckboxBase from '@/components/CheckboxBase.vue'
 import { useInstrumentsStore } from '@/stores/instrumentsStore'
 import { parse, calculateFingerings, hasNoGaps, hasPossibleStretch } from 'string-fingerings'
+import InfoOverlay from "@/components/InfoOverlay.vue";
 
 const fingeringsStore = useFingeringStore()
 const instrumentsStore = useInstrumentsStore()
@@ -64,7 +65,12 @@ watch(
               />
             </div>
             <div>
-              <label for="notes" class="font-bold text-gray-500">Notes</label>
+              <label for="notes" class="font-bold text-gray-500">Notes <InfoOverlay>
+                <p class="mb-3">Introduce one or more notes, separated by spaces.</p>
+                <p class="mb-3">Each note has a note letter (case-insensitive), an optional alteration and an octave number.</p>
+                <p class="mb-3">Valid alterations are: #, b, x and bb.</p>
+                <p class="mb-3">The middle C is C4.</p>
+              </InfoOverlay></label>
               <NotesInput
                 id="notes"
                 v-model="parsedNotes"
@@ -93,21 +99,23 @@ watch(
             <CheckboxBase
               id="validateNoGaps"
               v-model="validateNoGaps"
-              label="No gaps"
-              title="If checked, fingerings with gaps (i.e. where at least one string in the middle has to be skipped) will be filtered out. Tick this if you want plain multiple-stops."
-            />
+            >No gaps&nbsp;<InfoOverlay>
+              <p class="mb-3">If checked, fingerings with gaps (i.e. where at least one string not played in the middle) will be filtered out.</p>
+              <p class="mb-3">Fingerings with gaps are typically used for pizzicato playing. When using the bow, they cannot be played without stopping the sound, so they are better written separately, with or without grace notes.</p>
+            </InfoOverlay></CheckboxBase>
             <CheckboxBase
               id="validatePossibleStretch"
               v-model="validatePossibleStretch"
-              label="Discard impossible stretches"
-              :title="`Check to discard impossible stretches for the selected instrument (${instrument.maxStretch}mm)`"
-            />
+            >Discard impossible fingerings&nbsp;<InfoOverlay>
+              <p class="mb-3">This discard some impossible fingerings. The algorithm is simple so it cannot discard all of them.</p>
+              <p class="mb-3">Currently, it discards the fingering if it has stretches greater than ${{instrument.maxStretch}}mm between contiguous strings. It also checks that the stretch between the highest and the lowest stop cannot be greater than {{instrument.maxStretch * 1.02}}mm.</p>
+            </InfoOverlay></CheckboxBase>
             <CheckboxBase
               id="includeNaturalHarmonics"
               v-model="includeNaturalHarmonics"
-              label="Natural harmonics"
-              title="If checked, fingerings with natural harmonics will be included."
-            />
+            >Natural harmonics&nbsp;<InfoOverlay>
+              <p class="mb-3">If checked, fingerings with natural harmonics will be included.</p>
+            </InfoOverlay></CheckboxBase>
           </div>
         </div>
         <ScoreDisplay
