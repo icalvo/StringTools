@@ -1,20 +1,57 @@
 ﻿<script setup lang="ts">
 
 import type { Note } from 'string-fingerings'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, useTemplateRef } from 'vue'
 import { noteName, tryParse } from 'string-fingerings'
 
+class Queue<T> implements Iterable<T> {
+  private storage: T[] = [];
+  private set: Set<T> = new Set();
+
+  constructor(private capacity: number = Infinity) {}
+
+  enqueue(item: T): void {
+    if (this.set.has(item)) {
+      return;
+    }
+    if (this.size() === this.capacity) {
+      this.set.delete(item)
+      this.dequeue()
+    }
+
+    this.set.add(item)
+    this.storage.push(item);
+  }
+  dequeue(): T | undefined {
+    return this.storage.shift();
+  }
+  size(): number {
+    return this.storage.length;
+  }
+
+  [Symbol.iterator](): Iterator<T> {
+    return this.storage[Symbol.iterator]() as Iterator<T>;
+  }
+  clear(): void {
+    this.storage = []
+    this.set.clear()
+  }
+}
 const notes = defineModel<Note[]>()
 
+const props = defineProps<{
+  maxNotes: number
+}>()
 const notesToRepr = computed(() => notes.value?.map((n) => n.text()).join(' ') ?? '')
 const representation = ref('')
 const connectedPorts = ref<Set<string>>(new Set())
 const midiEnabled = computed(() => connectedPorts.value.size > 0)
 const midiAccess = ref<MIDIAccess | null>(null)
 const activeNotes = ref<Set<number>>(new Set())
-const pressedNotes = ref<Set<number>>(new Set())
+const pressedNotes = ref(new Queue<number>(props.maxNotes))
 
 const reprToNotes = computed(() => {
+  console.debug('Notes input changed to ', representation.value)
   const parsedNotes = representation.value
     .split(' ')
     .filter((s) => s !== '')
@@ -23,7 +60,7 @@ const reprToNotes = computed(() => {
   for (const result of parsedNotes) {
     if (typeof result.note === 'string') {
       for (const r2 of parsedNotes.filter((r) => typeof r.note === 'string')) {
-        console.log(`${r2.noteName} is invalid: ${r2.note}`)
+        console.debug(`${r2.noteName} is invalid: ${r2.note}`)
       }
 
       return []
@@ -34,7 +71,7 @@ const reprToNotes = computed(() => {
 })
 
 watch(notesToRepr, (newValue) => {
-  console.log('Updating representation with ', newValue)
+  console.debug('Updating representation with ', newValue)
   if (newValue.length > 0) representation.value = newValue
 })
 
@@ -56,7 +93,7 @@ onMounted(() => {
         // Set up MIDI input event listeners
         const inputs = access.inputs.values()
         for (let input = inputs.next(); !input.done; input = inputs.next()) {
-          console.log('MIDI input connected:', input.value.name)
+          console.debug('MIDI input connected:', input.value.name)
           connectedPorts.value.add(input.value.id)
           input.value.onmidimessage = handleMIDIMessage
         }
@@ -70,10 +107,10 @@ onMounted(() => {
               const input = event.port as MIDIInput
               
               input.onmidimessage = handleMIDIMessage
-              console.log('MIDI input connected:', event.port.name)
+              console.debug('MIDI input connected:', event.port.name)
               connectedPorts.value.add(event.port.id)
             } else {
-              console.log('MIDI input disconnected:', event.port.name)
+              console.debug('MIDI input disconnected:', event.port.name)
               connectedPorts.value.delete(event.port.id)
             }
           }
@@ -83,7 +120,7 @@ onMounted(() => {
         console.error('MIDI access request failed:', error)
       })
   } else {
-    console.log('Web MIDI API not supported in this browser')
+    console.debug('Web MIDI API not supported in this browser')
   }
 })
 
@@ -100,16 +137,17 @@ onUnmounted(() => {
 // Handle MIDI messages
 const handleMIDIMessage = (event: MIDIMessageEvent) => {
   if (event.data === null) return;
+  if (input.value !== document.activeElement) return;
   const [status, note, velocity] = event.data
   // Note on (144-159) with velocity > 0
   if (status >= 144 && status <= 159 && velocity > 0) {
-    console.log('Note on:', note, velocity)
+    console.debug('Note on:', note, velocity)
     activeNotes.value.add(note)
-    pressedNotes.value.add(note)
+    pressedNotes.value.enqueue(note)
   }
   // Note off (128-143) or note on with velocity 0
   else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
-    console.log('Note off:', note, velocity)
+    console.debug('Note off:', note, velocity)
     activeNotes.value.delete(note)
 
     // If all keys are released, update the representation
@@ -119,8 +157,10 @@ const handleMIDIMessage = (event: MIDIMessageEvent) => {
   }
 }
 
+const input = useTemplateRef('input')
 // Update representation with MIDI notes
 const updateRepresentationFromMidi = () => {
+  if (input.value !== document.activeElement) return;
   // Convert MIDI note numbers to note names (e.g., C5)
   const noteNames = Array.from(pressedNotes.value)
     .sort((a, b) => a - b) // Sort notes from lowest to highest
@@ -133,7 +173,7 @@ const updateRepresentationFromMidi = () => {
   // Update the representation and trigger the model update
   if (noteNames.length > 0) {
     const newRep = noteNames.join(' ')
-    console.log('Updating representation from MIDI:', newRep)
+    console.debug('Updating representation from MIDI:', newRep)
     representation.value = newRep
   }
 }
@@ -141,10 +181,10 @@ const updateRepresentationFromMidi = () => {
 
 <template>
   <div class="relative">
-    <input v-model="representation" type="text" />
+    <input ref="input" v-model="representation" type="text" class="peer" />
     <span
       v-if="midiEnabled"
-      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-green-600 font-medium"
+      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-transparent font-medium peer-focus:text-green-600"
       >MIDI</span
     >
   </div>

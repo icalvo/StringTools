@@ -42,7 +42,7 @@ const strings = computed(() =>
       sy: string.startPositionInImage[1],
       ex: string.endPositionInImage[0],
       ey: string.endPositionInImage[1],
-      additionalStops: string.additionalOpenNotes?.map((openNote) => openNote - string.openNote) ?? [],
+      additionalStops: string.additionalOpenSemitones ?? [],
     }))
 )
 

@@ -1,6 +1,6 @@
 ﻿import {defineStore} from 'pinia';
-import type { Instrument, InstrumentString } from 'string-fingerings'
-import {nn} from 'string-fingerings';
+import type { Note, Instrument, InstrumentString } from 'string-fingerings'
+import {parse} from 'string-fingerings';
 
 //** Adds UI-related properties to the string-fingerings types */
 export interface UiInstrument extends Instrument<UiString> {
@@ -24,6 +24,9 @@ export const useInstrumentsStore = defineStore('instruments', {
         changeStops(instrumentIndex: number, stops: number) {
             this.instruments[instrumentIndex].stops = stops
         },
+        changeOpenNote(instrumentIndex: number, stringIndex: number, openNote: Note) {
+            this.instruments[instrumentIndex].strings[stringIndex].openNote = openNote
+        }
     },
 })
 
@@ -38,26 +41,22 @@ const initialInstruments: UiInstrument[] = [
         maxStretch: 92,
         strings: [
             {
-                name: 'G',
-                openNote: nn('G3'),
+                openNote: parse('G3'),
                 startPositionInImage: [287, 229],
                 endPositionInImage: [269, 990]
             },
             {
-                name: 'D',
-                openNote: nn('D4'),
+                openNote: parse('D4'),
                 startPositionInImage: [299, 229],
                 endPositionInImage: [297, 990]
             },
             {
-                name: 'A',
-                openNote: nn('A4'),
+                openNote: parse('A4'),
                 startPositionInImage: [312, 229],
                 endPositionInImage: [326, 991]
             },
             {
-                name: 'E',
-                openNote: nn('E5'),
+                openNote: parse('E5'),
                 startPositionInImage: [322, 230],
                 endPositionInImage: [352, 991]
             }
@@ -73,26 +72,22 @@ const initialInstruments: UiInstrument[] = [
         maxStretch: 92,
         strings: [
             {
-                name: 'C',
-                openNote: nn('C3'),
+                openNote: parse('C3'),
                 startPositionInImage: [287, 229],
                 endPositionInImage: [269, 990]
             },
             {
-                name: 'G',
-                openNote: nn('G3'),
+                openNote: parse('G3'),
                 startPositionInImage: [299, 229],
                 endPositionInImage: [297, 990]
             },
             {
-                name: 'D',
-                openNote: nn('D4'),
+                openNote: parse('D4'),
                 startPositionInImage: [312, 229],
                 endPositionInImage: [326, 991]
             },
             {
-                name: 'A',
-                openNote: nn('A4'),
+                openNote: parse('A4'),
                 startPositionInImage: [322, 230],
                 endPositionInImage: [352, 991]
             }
@@ -108,26 +103,22 @@ const initialInstruments: UiInstrument[] = [
         maxStretch: 92,
         strings: [
             {
-                name: 'C',
-                openNote: nn('C3'),
+                openNote: parse('C3'),
                 startPositionInImage: [287, 229],
                 endPositionInImage: [269, 990]
             },
             {
-                name: 'G',
-                openNote: nn('G3'),
+                openNote: parse('G3'),
                 startPositionInImage: [299, 229],
                 endPositionInImage: [297, 990]
             },
             {
-                name: 'D',
-                openNote: nn('D4'),
+                openNote: parse('D4'),
                 startPositionInImage: [312, 229],
                 endPositionInImage: [326, 991]
             },
             {
-                name: 'A',
-                openNote: nn('A4'),
+                openNote: parse('A4'),
                 startPositionInImage: [322, 230],
                 endPositionInImage: [352, 991]
             }
@@ -143,26 +134,22 @@ const initialInstruments: UiInstrument[] = [
         maxStretch: 92,
         strings: [
             {
-                name: 'C',
-                openNote: nn('C3'),
+                openNote: parse('C3'),
                 startPositionInImage: [287, 229],
                 endPositionInImage: [269, 990]
             },
             {
-                name: 'G',
-                openNote: nn('G3'),
+                openNote: parse('G3'),
                 startPositionInImage: [299, 229],
                 endPositionInImage: [297, 990]
             },
             {
-                name: 'D',
-                openNote: nn('D4'),
+                openNote: parse('D4'),
                 startPositionInImage: [312, 229],
                 endPositionInImage: [326, 991]
             },
             {
-                name: 'A',
-                openNote: nn('A4'),
+                openNote: parse('A4'),
                 startPositionInImage: [322, 230],
                 endPositionInImage: [352, 991]
             }
@@ -178,26 +165,22 @@ const initialInstruments: UiInstrument[] = [
         maxStretch: 116,
         strings: [
             {
-                name: 'C',
-                openNote: nn('C2'),
+                openNote: parse('C2'),
                 startPositionInImage: [300, 216],
                 endPositionInImage: [260, 998]
             },
             {
-                name: 'G',
-                openNote: nn('G2'),
+                openNote: parse('G2'),
                 startPositionInImage: [310, 215],
                 endPositionInImage: [279, 1000]
             },
             {
-                name: 'D',
-                openNote: nn('D3'),
+                openNote: parse('D3'),
                 startPositionInImage: [320, 215],
                 endPositionInImage: [298, 1001]
             },
             {
-                name: 'A',
-                openNote: nn('A3'),
+                openNote: parse('A3'),
                 startPositionInImage: [329, 216],
                 endPositionInImage: [316, 1001]
             }
@@ -214,32 +197,27 @@ const initialInstruments: UiInstrument[] = [
         transposition: 12,
         strings: [
             {
-                name: 'C',
-                openNote: nn('C1'),
+                openNote: parse('C1'),
                 startPositionInImage: [282, 182],
                 endPositionInImage: [265, 990]
             },
             {
-                name: 'E',
-                openNote: nn('E1'),
+                openNote: parse('E1'),
                 startPositionInImage: [291, 182],
                 endPositionInImage: [285, 991]
             },
             {
-                name: 'A',
-                openNote: nn('A1'),
+                openNote: parse('A1'),
                 startPositionInImage: [300, 181],
                 endPositionInImage: [307, 991]
             },
             {
-                name: 'D',
-                openNote: nn('D2'),
+                openNote: parse('D2'),
                 startPositionInImage: [309, 181],
                 endPositionInImage: [329, 990]
             },
             {
-                name: 'G',
-                openNote: nn('G2'),
+                openNote: parse('G2'),
                 startPositionInImage: [316, 182],
                 endPositionInImage: [347, 988]
             }
@@ -256,26 +234,22 @@ const initialInstruments: UiInstrument[] = [
         transposition: 12,
         strings: [
             {
-                name: 'E',
-                openNote: nn('E1'),
+                openNote: parse('E1'),
                 startPositionInImage: [277, 201],
                 endPositionInImage: [265, 979]
             },
             {
-                name: 'A',
-                openNote: nn('A1'),
+                openNote: parse('A1'),
                 startPositionInImage: [284, 199],
                 endPositionInImage: [284, 979]
             },
             {
-                name: 'D',
-                openNote: nn('D2'),
+                openNote: parse('D2'),
                 startPositionInImage: [293, 200],
                 endPositionInImage: [310, 979]
             },
             {
-                name: 'G',
-                openNote: nn('G2'),
+                openNote: parse('G2'),
                 startPositionInImage: [302, 201],
                 endPositionInImage: [333, 978]
             }
@@ -292,27 +266,23 @@ const initialInstruments: UiInstrument[] = [
         transposition: 12,
         strings: [
             {
-                name: 'E',
-                openNote: nn('E1'),
+                openNote: parse('E1'),
                 startPositionInImage: [293, 216],
                 endPositionInImage: [275, 979],
-                additionalOpenNotes: [nn('D#1'), nn('D1'), nn('C#1'), nn('C1')]
+                additionalOpenSemitones: [-1,-2,-3,-4],
             },
             {
-                name: 'A',
-                openNote: nn('A1'),
+                openNote: parse('A1'),
                 startPositionInImage: [300, 214],
                 endPositionInImage: [295, 981]
             },
             {
-                name: 'D',
-                openNote: nn('D2'),
+                openNote: parse('D2'),
                 startPositionInImage: [307, 214],
                 endPositionInImage: [317, 981]
             },
             {
-                name: 'G',
-                openNote: nn('G2'),
+                openNote: parse('G2'),
                 startPositionInImage: [315, 215],
                 endPositionInImage: [335, 978]
             }
@@ -329,32 +299,27 @@ const initialInstruments: UiInstrument[] = [
         transposition: 12,
         strings: [
             {
-                name: 'C',
-                openNote: nn('C1'),
+                openNote: parse('C1'),
                 startPositionInImage: [282, 182],
                 endPositionInImage: [265, 990]
             },
             {
-                name: 'E',
-                openNote: nn('E1'),
+                openNote: parse('E1'),
                 startPositionInImage: [291, 182],
                 endPositionInImage: [285, 991]
             },
             {
-                name: 'A',
-                openNote: nn('A1'),
+                openNote: parse('A1'),
                 startPositionInImage: [300, 181],
                 endPositionInImage: [307, 991]
             },
             {
-                name: 'D',
-                openNote: nn('D2'),
+                openNote: parse('D2'),
                 startPositionInImage: [309, 181],
                 endPositionInImage: [329, 990]
             },
             {
-                name: 'G',
-                openNote: nn('G2'),
+                openNote: parse('G2'),
                 startPositionInImage: [316, 182],
                 endPositionInImage: [347, 988]
             }
@@ -371,26 +336,22 @@ const initialInstruments: UiInstrument[] = [
         transposition: 12,
         strings: [
             {
-                name: 'E',
-                openNote: nn('E1'),
+                openNote: parse('E1'),
                 startPositionInImage: [277, 201],
                 endPositionInImage: [265, 979]
             },
             {
-                name: 'A',
-                openNote: nn('A1'),
+                openNote: parse('A1'),
                 startPositionInImage: [284, 199],
                 endPositionInImage: [284, 979]
             },
             {
-                name: 'D',
-                openNote: nn('D2'),
+                openNote: parse('D2'),
                 startPositionInImage: [293, 200],
                 endPositionInImage: [310, 979]
             },
             {
-                name: 'G',
-                openNote: nn('G2'),
+                openNote: parse('G2'),
                 startPositionInImage: [302, 201],
                 endPositionInImage: [333, 978]
             }
@@ -407,27 +368,23 @@ const initialInstruments: UiInstrument[] = [
         transposition: 12,
         strings: [
             {
-                name: 'E',
-                openNote: nn('E1'),
+                openNote: parse('E1'),
                 startPositionInImage: [293, 216],
                 endPositionInImage: [275, 979],
-                additionalOpenNotes: [nn('D#1'), nn('D1'), nn('C#1'), nn('C1')]
+                additionalOpenSemitones: [-1,-2,-3,-4],
             },
             {
-                name: 'A',
-                openNote: nn('A1'),
+                openNote: parse('A1'),
                 startPositionInImage: [300, 214],
                 endPositionInImage: [295, 981]
             },
             {
-                name: 'D',
-                openNote: nn('D2'),
+                openNote: parse('D2'),
                 startPositionInImage: [307, 214],
                 endPositionInImage: [317, 981]
             },
             {
-                name: 'G',
-                openNote: nn('G2'),
+                openNote: parse('G2'),
                 startPositionInImage: [315, 215],
                 endPositionInImage: [335, 978]
             }

@@ -128,20 +128,16 @@ const violin = {
   maxStretch: 92,
   strings: [
     {
-      name: 'G',
-      openNote: nn('G3'),
+      openNote: parse('G3'),
     },
     {
-      name: 'D',
-      openNote: nn('D4'),
+      openNote: parse('D4'),
     },
     {
-      name: 'A',
-      openNote: nn('A4'),
+      openNote: parse('A4'),
     },
     {
-      name: 'E',
-      openNote: nn('E5'),
+      openNote: parse('E5'),
     }
   ]
 }
@@ -154,21 +150,17 @@ const bassExtension = {
     maxStretch: 120,
     strings: [
     {
-      name: 'E',
-      openNote: nn('E1'),
-      additionalOpenNotes: [nn('D#1'), nn('D1'), nn('C#1'), nn('C1')]
+      openNote: parse('E1'),
+      additionalOpenSemitones: [-1,-2,-3,-4],
     },
     {
-      name: 'A',
-      openNote: nn('A1')
+      openNote: parse('A1')
     },
     {
-      name: 'D',
-      openNote: nn('D2')
+      openNote: parse('D2')
     },
     {
-      name: 'G',
-      openNote: nn('G2')
+      openNote: parse('G2')
     }
   ]
 }

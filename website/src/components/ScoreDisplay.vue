@@ -1,6 +1,5 @@
 ﻿<script setup lang="ts">
 import type { Note } from 'string-fingerings'
-import { abcnote } from 'string-fingerings'
 import { renderAbc } from 'abcjs'
 import {computed, useTemplateRef, watch} from 'vue'
 import { type UiInstrument, useInstrumentsStore } from '@/stores/instrumentsStore'
@@ -17,17 +16,20 @@ const props = withDefaults(
     }>(),
     { scale: 2 })
 
+const score = useTemplateRef('score')
+
 const instrument = computed(() => 
     typeof props.instrument === "number"
     ? instruments[props.instrument]
     : props.instrument)
 function showScore(target: HTMLElement, notes: {note:Note,harmonic:boolean}[], instrument: UiInstrument) {
   const lowestNote = instrument.strings.reduce((prev, curr) => {
-    const additionalOpenNotes = curr.additionalOpenNotes ?? []
-    return Math.min(prev, curr.openNote, ...additionalOpenNotes);
+    const additionalOpenSemitones = curr.additionalOpenSemitones ?? []
+    const additionalOpenNotes = additionalOpenSemitones.map((s) => s + curr.openNote.number)
+    return Math.min(prev, curr.openNote.number, ...additionalOpenNotes);
   }, 1000)
   const highestNote = instrument.strings.reduce(
-    (prev, curr) => Math.max(prev, curr.openNote + instrument.stops),
+    (prev, curr) => Math.max(prev, curr.openNote.number + instrument.stops),
     0
   )
   if (notes.some((n) => n.note.number < lowestNote || n.note.number > highestNote)) {
@@ -50,7 +52,6 @@ function show() {
   else showScore(score.value, [], instrument.value)
 }
 
-const score = useTemplateRef('score')
 
 watch(() => props.notes, show)
 watch(() => props.instrument, show)

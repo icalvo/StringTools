@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+## [1.0.2] - 2025-08-28
+### Removed
+- [BREAKING] Removed `String.additionalOpenNotes`
+- [BREAKING] Removed `String.name` because it is based on the open note name, which can change due to scordatura. Clients should current `String.openNote` or the string index to build a proper string name.
+### Changed
+- [BREAKING] Changed `String.openNote` type to `Note`
+### Added
+- Added `String.additionalOpenSemitones` which is a collection of (negative) numbers that can be added to the open note to get the additional available open notes.
+
 ## [0.6.0] 
 ### Added
 - Optional max stops per string.
