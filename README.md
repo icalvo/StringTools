@@ -87,8 +87,8 @@ These are instructions on how to work with a Github issue with number `<ISSUE>`.
   - Rest of prereleases: `publish.ps1 prerelease`
   - Final release: `publish.ps1 release`
   - After every release is published with version `<VERSION>`: `cd website; npm install string-fingerings@<VERSION>`
-- `gh pr create`, write `Fixes #<ISSUE>` on PR body.
-- Review PR and push what's needed.
+- `gh pr create --body "Fixes #<ISSUE>" -e`
+- `gh pr view <PR> -w`: Review PR and push what's needed.
 - `gh pr merge <PR>`
 
 Use `gh pr list` to remember the PR number.
