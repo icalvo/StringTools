@@ -35,7 +35,6 @@ watch(
   ],
   ([inst, , rparsedNotes, rvalidateNoGaps, rvalidatePossibleStretch, rincludeNaturalHarmonics]) => {
     const validations = []
-    console.warn("Update calc", inst.strings[0]?.openNote)
     if (rvalidateNoGaps) validations.push(hasNoGaps)
     if (rvalidatePossibleStretch) validations.push(hasPossibleStretch)
 

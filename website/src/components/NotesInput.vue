@@ -51,7 +51,7 @@ const activeNotes = ref<Set<number>>(new Set())
 const pressedNotes = ref(new Queue<number>(props.maxNotes))
 
 const reprToNotes = computed(() => {
-  console.log('Notes input changed to ', representation.value)
+  console.debug('Notes input changed to ', representation.value)
   const parsedNotes = representation.value
     .split(' ')
     .filter((s) => s !== '')
@@ -60,7 +60,7 @@ const reprToNotes = computed(() => {
   for (const result of parsedNotes) {
     if (typeof result.note === 'string') {
       for (const r2 of parsedNotes.filter((r) => typeof r.note === 'string')) {
-        console.log(`${r2.noteName} is invalid: ${r2.note}`)
+        console.debug(`${r2.noteName} is invalid: ${r2.note}`)
       }
 
       return []
@@ -71,7 +71,7 @@ const reprToNotes = computed(() => {
 })
 
 watch(notesToRepr, (newValue) => {
-  console.log('Updating representation with ', newValue)
+  console.debug('Updating representation with ', newValue)
   if (newValue.length > 0) representation.value = newValue
 })
 
@@ -93,7 +93,7 @@ onMounted(() => {
         // Set up MIDI input event listeners
         const inputs = access.inputs.values()
         for (let input = inputs.next(); !input.done; input = inputs.next()) {
-          console.log('MIDI input connected:', input.value.name)
+          console.debug('MIDI input connected:', input.value.name)
           connectedPorts.value.add(input.value.id)
           input.value.onmidimessage = handleMIDIMessage
         }
@@ -107,10 +107,10 @@ onMounted(() => {
               const input = event.port as MIDIInput
               
               input.onmidimessage = handleMIDIMessage
-              console.log('MIDI input connected:', event.port.name)
+              console.debug('MIDI input connected:', event.port.name)
               connectedPorts.value.add(event.port.id)
             } else {
-              console.log('MIDI input disconnected:', event.port.name)
+              console.debug('MIDI input disconnected:', event.port.name)
               connectedPorts.value.delete(event.port.id)
             }
           }
@@ -120,7 +120,7 @@ onMounted(() => {
         console.error('MIDI access request failed:', error)
       })
   } else {
-    console.log('Web MIDI API not supported in this browser')
+    console.debug('Web MIDI API not supported in this browser')
   }
 })
 
@@ -141,13 +141,13 @@ const handleMIDIMessage = (event: MIDIMessageEvent) => {
   const [status, note, velocity] = event.data
   // Note on (144-159) with velocity > 0
   if (status >= 144 && status <= 159 && velocity > 0) {
-    console.log('Note on:', note, velocity)
+    console.debug('Note on:', note, velocity)
     activeNotes.value.add(note)
     pressedNotes.value.enqueue(note)
   }
   // Note off (128-143) or note on with velocity 0
   else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
-    console.log('Note off:', note, velocity)
+    console.debug('Note off:', note, velocity)
     activeNotes.value.delete(note)
 
     // If all keys are released, update the representation
@@ -173,7 +173,7 @@ const updateRepresentationFromMidi = () => {
   // Update the representation and trigger the model update
   if (noteNames.length > 0) {
     const newRep = noteNames.join(' ')
-    console.log('Updating representation from MIDI:', newRep)
+    console.debug('Updating representation from MIDI:', newRep)
     representation.value = newRep
   }
 }
