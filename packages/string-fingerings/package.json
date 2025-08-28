@@ -1,6 +1,6 @@
 {
   "name": "string-fingerings",
-  "version": "1.0.2",
+  "version": "1.0.3-0",
   "description": "Utilities for calculating fingerings on string instruments",
   "files": [
     "dist"
