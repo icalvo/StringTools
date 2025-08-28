@@ -77,3 +77,18 @@ npm run test:e2e -- --debug
 ```sh
 npm run lint
 ```
+### Github CLI flow
+
+These are instructions on how to work with a Github issue with number `<ISSUE>`. If you don't remember the issue number, you can use `gh issue list` to see all the open issues.
+- `gh issue develop <ISSUE> -c [-n <BRANCH_NAME>]`
+- Development and commits (can push but not needed).
+- If package release is needed, decide `<RTYPE>` to be major, minor or patch:
+  - First release: `publish.ps1 pre<RTYPE>`
+  - Rest of prereleases: `publish.ps1 prerelease`
+  - Final release: `publish.ps1 release`
+  - After every release is published with version `<VERSION>`: `cd website; npm install string-fingerings@<VERSION>`
+- `gh pr create`, write `Fixes #<ISSUE>` on PR body.
+- Review PR and push what's needed.
+- `gh pr merge <PR>`
+
+Use `gh pr list` to remember the PR number.
