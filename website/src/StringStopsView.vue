@@ -8,7 +8,7 @@ import FingeringsDescription from '@/StringStopsFingeringsDescription.vue'
 import { useFingeringStore } from '@/stores/fingeringsStore'
 import CheckboxBase from '@/components/CheckboxBase.vue'
 import { useInstrumentsStore } from '@/stores/instrumentsStore'
-import { parse, calculateFingerings, hasNoGaps, hasPossibleStretch } from 'string-fingerings'
+import { parse, calculateFingerings, hasNoGaps, hasPossibleStretch, noteName } from 'string-fingerings'
 import InfoOverlay from "@/components/InfoOverlay.vue";
 
 const fingeringsStore = useFingeringStore()
@@ -20,6 +20,7 @@ const validateNoGaps = ref(true)
 const validatePossibleStretch = ref(true)
 const includeNaturalHarmonics = ref(false)
 const showScordatura = ref(false)
+const showHighestStops = ref(false)
 
 const instrument = computed(() => instrumentsStore.instruments[selectedInstrument.value])
 const stops = computed(() => instrument.value.stops)
@@ -82,7 +83,7 @@ watch(
               />
             </div>
             <div class="relative">
-              <button class="shadow border-red-900 bg-red-800 rounded-full font-bold text-white p-2" @click="showScordatura = !showScordatura">Scordatura {{showScordatura ? "▲" : "▼"}}</button>
+              <button class="shadow border-red-900 bg-red-800 rounded-full font-bold text-white py-2 px-3" @click="showScordatura = !showScordatura">Scordatura {{showScordatura ? "▲" : "▼"}}</button>
               <div v-show="showScordatura" class="p-3 absolute shadow-xl border bg-white z-[900]">
                 <div v-for="(string, index) in instrument.strings" :key="index" class="mb-2">
                   <label for="notes" class="font-bold text-gray-500">Open string {{index+1}} <InfoOverlay>
@@ -103,24 +104,29 @@ watch(
                 </div>
               </div>
             </div>
-            <div>
-              <label for="stops" class="font-bold text-gray-500"
-                >Available semitones from open string</label
-              >
-              <input
-                id="stops"
-                type="number"
-                :value="instrument.stops"
-                class="shadow border w-full bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                @input="
-                  (event) =>
-                    instrumentsStore.changeStops(
-                      selectedInstrument,
-                      (event.target as HTMLInputElement).valueAsNumber
-                    )
-                "
-              />
+            <div class="relative">
+              <button class="shadow border-red-900 bg-red-800 rounded-full font-bold text-white py-2 px-3" @click="showHighestStops = !showHighestStops">Highest stops {{showHighestStops ? "▲" : "▼"}}</button>
+              <div v-show="showHighestStops" class="p-3 absolute shadow-xl border bg-white z-[900]">
+                <div v-for="(string, index) in instrument.strings" :key="index" class="mb-2">
+                  <label for="notes" class="font-bold text-gray-500">Highest note on string {{index+1}} <InfoOverlay>
+                    <p class="mb-3">Introduce one note.</p>
+                    <p class="mb-3">The note has a note letter (case-insensitive), an optional alteration and an octave number.</p>
+                    <p class="mb-3">Valid alterations are: #, b, x and bb.</p>
+                    <p class="mb-3">The middle C is C4.</p>
+                    <p class="mb-3">You can also use a MIDI keyboard to input the note. <strong>Please focus on the input box before playing the notes.</strong></p>
+                  </InfoOverlay></label>
+                  <NotesInput
+                      id="notes"
+                      :model-value="[ parse(noteName(string.openNote.number + (string.stops ?? instrument.stops))) ]"
+                      :max-notes="1"
+                      placeholder="C5"
+                      class="shadow border bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                      @update:model-value="notes => { if (notes && notes[0]) instrumentsStore.changeHighestNote(selectedInstrument, index, notes[0]) }"
+                  />
+                </div>
+              </div>
             </div>
+            
             <CheckboxBase
               id="validateNoGaps"
               v-model="validateNoGaps"

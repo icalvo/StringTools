@@ -42,6 +42,7 @@ const strings = computed(() =>
       sy: string.startPositionInImage[1],
       ex: string.endPositionInImage[0],
       ey: string.endPositionInImage[1],
+      stops: string.stops ?? instrument.value.stops,
       additionalStops: string.additionalOpenSemitones ?? [],
     }))
 )
@@ -49,7 +50,7 @@ const strings = computed(() =>
 const allStops = computed(() =>
     strings.value.flatMap((string) =>
     {
-      return [...Array(instrument.value.stops + 1).keys()]
+      return [...Array(string.stops + 1).keys()]
             .concat(...string.additionalStops)
             .map((stopIndex) => {
                 const stopRelPos = getStopRelPos(stopIndex)
