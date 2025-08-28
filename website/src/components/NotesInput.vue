@@ -184,7 +184,7 @@ const updateRepresentationFromMidi = () => {
     <input ref="input" v-model="representation" type="text" class="peer" />
     <span
       v-if="midiEnabled"
-      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-white font-medium peer-focus:text-red-600"
+      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-transparent font-medium peer-focus:text-green-600"
       >MIDI</span
     >
   </div>
