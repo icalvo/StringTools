@@ -26,7 +26,7 @@ export interface Stop extends StopCalculationData {
 
 /** Represent a string in a string instrument */
 export interface InstrumentString {
-    /** Open string note as a MIDI number (middle C = 60) */
+    /** Open string note */
     openNote: Note
     /** Additional open strings, as semitone offsets from the open string */
     additionalOpenSemitones?: number[]
