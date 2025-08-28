@@ -17,10 +17,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@netlify/functions": "^2.8.2",
+    "@netlify/functions": "^4.2.4",
     "abcjs": "^6.4.3",
     "pinia": "^2.2.4",
-    "string-fingerings": "^0.6.1",
+    "string-fingerings": "^1.0.2-2",
     "vue": "^3.5.11",
     "vue-router": "^4.4.5"
   },

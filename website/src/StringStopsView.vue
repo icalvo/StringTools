@@ -19,6 +19,7 @@ const parsedNotes = ref([parse('G3'), parse('D4')])
 const validateNoGaps = ref(true)
 const validatePossibleStretch = ref(true)
 const includeNaturalHarmonics = ref(false)
+const showScordatura = ref(false)
 
 const instrument = computed(() => instrumentsStore.instruments[selectedInstrument.value])
 const stops = computed(() => instrument.value.stops)
@@ -34,6 +35,7 @@ watch(
   ],
   ([inst, , rparsedNotes, rvalidateNoGaps, rvalidatePossibleStretch, rincludeNaturalHarmonics]) => {
     const validations = []
+    console.warn("Update calc", inst.strings[0]?.openNote)
     if (rvalidateNoGaps) validations.push(hasNoGaps)
     if (rvalidatePossibleStretch) validations.push(hasPossibleStretch)
 
@@ -44,7 +46,7 @@ watch(
       rincludeNaturalHarmonics
     )
     fingeringsStore.loadFingerings(newFingerings)
-  }
+  }, {deep: true}
 )
 </script>
 
@@ -70,13 +72,37 @@ watch(
                 <p class="mb-3">Each note has a note letter (case-insensitive), an optional alteration and an octave number.</p>
                 <p class="mb-3">Valid alterations are: #, b, x and bb.</p>
                 <p class="mb-3">The middle C is C4.</p>
+                <p class="mb-3">You can also use a MIDI keyboard to input the notes. <strong>Please focus on the input box before playing the notes.</strong></p>
               </InfoOverlay></label>
               <NotesInput
                 id="notes"
                 v-model="parsedNotes"
+                :max-notes="instrument.strings.length"
                 placeholder="C5 G5"
                 class="shadow border bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
               />
+            </div>
+            <div class="relative">
+              <button class="shadow border-red-900 bg-red-800 rounded-full font-bold text-white p-2" @click="showScordatura = !showScordatura">Scordatura {{showScordatura ? "▲" : "▼"}}</button>
+              <div v-show="showScordatura" class="p-3 absolute shadow-xl border bg-white z-[900]">
+                <div v-for="(string, index) in instrument.strings" :key="index" class="mb-2">
+                  <label for="notes" class="font-bold text-gray-500">Open string {{index+1}} <InfoOverlay>
+                    <p class="mb-3">Introduce one note.</p>
+                    <p class="mb-3">The note has a note letter (case-insensitive), an optional alteration and an octave number.</p>
+                    <p class="mb-3">Valid alterations are: #, b, x and bb.</p>
+                    <p class="mb-3">The middle C is C4.</p>
+                    <p class="mb-3">You can also use a MIDI keyboard to input the note. <strong>Please focus on the input box before playing the notes.</strong></p>
+                  </InfoOverlay></label>
+                  <NotesInput
+                      id="notes"
+                      :model-value="[string.openNote]"
+                      :max-notes="1"
+                      placeholder="C5"
+                      class="shadow border bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                      @update:model-value="notes => { if (notes && notes[0]) instrumentsStore.changeOpenNote(selectedInstrument, index, notes[0]) }"
+                  />
+                </div>
+              </div>
             </div>
             <div>
               <label for="stops" class="font-bold text-gray-500"

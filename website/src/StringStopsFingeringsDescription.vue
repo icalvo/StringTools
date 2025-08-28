@@ -2,10 +2,8 @@
 import { computed } from 'vue'
 import { fingeringColor } from '@/data/presentation'
 import { useFingeringStore } from '@/stores/fingeringsStore'
-import ScoreDisplay from '@/components/ScoreDisplay.vue'
 import ToggleBase from '@/components/ToggleBase.vue'
 import type { UiInstrument } from '@/stores/instrumentsStore'
-import { parse, noteName } from 'string-fingerings'
 
 const props = defineProps<{
   instrument: UiInstrument
@@ -19,7 +17,7 @@ const data = computed(() =>
     enabled: fingeringToggle.enabled,
     hasHarmonics: fingeringToggle.fingering.some((s) => s.naturalHarmonic),
     stops: fingeringToggle.fingering.map((stop) => {
-      const stringName = props.instrument.strings[stop.stringIndex].name
+      const stringName = props.instrument.strings[stop.stringIndex].openNote.name
       return {
         stringName,
         note: stop.noteNumber,

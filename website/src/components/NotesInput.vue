@@ -1,20 +1,57 @@
 ﻿<script setup lang="ts">
 
 import type { Note } from 'string-fingerings'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, useTemplateRef } from 'vue'
 import { noteName, tryParse } from 'string-fingerings'
 
+class Queue<T> implements Iterable<T> {
+  private storage: T[] = [];
+  private set: Set<T> = new Set();
+
+  constructor(private capacity: number = Infinity) {}
+
+  enqueue(item: T): void {
+    if (this.set.has(item)) {
+      return;
+    }
+    if (this.size() === this.capacity) {
+      this.set.delete(item)
+      this.dequeue()
+    }
+
+    this.set.add(item)
+    this.storage.push(item);
+  }
+  dequeue(): T | undefined {
+    return this.storage.shift();
+  }
+  size(): number {
+    return this.storage.length;
+  }
+
+  [Symbol.iterator](): Iterator<T> {
+    return this.storage[Symbol.iterator]() as Iterator<T>;
+  }
+  clear(): void {
+    this.storage = []
+    this.set.clear()
+  }
+}
 const notes = defineModel<Note[]>()
 
+const props = defineProps<{
+  maxNotes: number
+}>()
 const notesToRepr = computed(() => notes.value?.map((n) => n.text()).join(' ') ?? '')
 const representation = ref('')
 const connectedPorts = ref<Set<string>>(new Set())
 const midiEnabled = computed(() => connectedPorts.value.size > 0)
 const midiAccess = ref<MIDIAccess | null>(null)
 const activeNotes = ref<Set<number>>(new Set())
-const pressedNotes = ref<Set<number>>(new Set())
+const pressedNotes = ref(new Queue<number>(props.maxNotes))
 
 const reprToNotes = computed(() => {
+  console.log('Notes input changed to ', representation.value)
   const parsedNotes = representation.value
     .split(' ')
     .filter((s) => s !== '')
@@ -100,12 +137,13 @@ onUnmounted(() => {
 // Handle MIDI messages
 const handleMIDIMessage = (event: MIDIMessageEvent) => {
   if (event.data === null) return;
+  if (input.value !== document.activeElement) return;
   const [status, note, velocity] = event.data
   // Note on (144-159) with velocity > 0
   if (status >= 144 && status <= 159 && velocity > 0) {
     console.log('Note on:', note, velocity)
     activeNotes.value.add(note)
-    pressedNotes.value.add(note)
+    pressedNotes.value.enqueue(note)
   }
   // Note off (128-143) or note on with velocity 0
   else if ((status >= 128 && status <= 143) || (status >= 144 && status <= 159 && velocity === 0)) {
@@ -119,9 +157,10 @@ const handleMIDIMessage = (event: MIDIMessageEvent) => {
   }
 }
 
+const input = useTemplateRef('input')
 // Update representation with MIDI notes
 const updateRepresentationFromMidi = () => {
-  // TODO: update value only when input is focused
+  if (input.value !== document.activeElement) return;
   // Convert MIDI note numbers to note names (e.g., C5)
   const noteNames = Array.from(pressedNotes.value)
     .sort((a, b) => a - b) // Sort notes from lowest to highest
@@ -142,10 +181,10 @@ const updateRepresentationFromMidi = () => {
 
 <template>
   <div class="relative">
-    <input v-model="representation" type="text" />
+    <input ref="input" v-model="representation" type="text" class="peer" />
     <span
       v-if="midiEnabled"
-      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-green-600 font-medium"
+      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-white font-medium peer-focus:text-red-600"
       >MIDI</span
     >
   </div>
