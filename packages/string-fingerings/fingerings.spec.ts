@@ -1,14 +1,19 @@
-﻿import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
     abcnote,
     calculateFingerings,
+    expandPitchClass,
     fingeringHardness,
+    generateNoteCombinations,
     getStopRelPos,
     hasNoGaps,
     hasPossibleStretch,
+    isNote,
     nn,
     noteName,
-    noteNumber, parse
+    noteNumber,
+    parse,
+    tryParseInput
 } from './fingerings.js'
 
 describe('noteName', () => {
@@ -300,5 +305,141 @@ describe('fingeringHardness', () => {
       { stringIndex: 0, stopIndex: 9 },
       { stringIndex: 1, stopIndex: 5 },
       { stringIndex: 2, stopIndex: 2 }])).toBe(1.0)
+  })
+})
+
+describe('tryParseInput', () => {
+  it('parses a note with octave as a Note', () => {
+    const result = tryParseInput('C4')
+    expect(typeof result).not.toBe('string')
+    expect(isNote(result as any)).toBe(true)
+    const note = result as ReturnType<typeof parse>
+    expect(note.name).toBe('C')
+    expect(note.octave).toBe(5)
+    expect(note.number).toBe(60)
+  })
+
+  it('parses a single letter as a PitchClass', () => {
+    const result = tryParseInput('G')
+    expect(typeof result).not.toBe('string')
+    expect(isNote(result as any)).toBe(false)
+    expect((result as any).name).toBe('G')
+    expect((result as any).alteration).toBe('')
+    expect((result as any).text()).toBe('G')
+  })
+
+  it('parses a letter with sharp as a PitchClass', () => {
+    const result = tryParseInput('C#')
+    expect(typeof result).not.toBe('string')
+    expect(isNote(result as any)).toBe(false)
+    expect((result as any).name).toBe('C')
+    expect((result as any).alteration).toBe('#')
+    expect((result as any).text()).toBe('C#')
+  })
+
+  it('parses a letter with flat as a PitchClass', () => {
+    const result = tryParseInput('Db')
+    expect(typeof result).not.toBe('string')
+    expect(isNote(result as any)).toBe(false)
+    expect((result as any).name).toBe('D')
+    expect((result as any).alteration).toBe('b')
+  })
+
+  it('parses double flat as a PitchClass', () => {
+    const result = tryParseInput('Ebb')
+    expect(typeof result).not.toBe('string')
+    expect(isNote(result as any)).toBe(false)
+    expect((result as any).alteration).toBe('bb')
+  })
+
+  it('parses double sharp as a PitchClass', () => {
+    const result = tryParseInput('Fx')
+    expect(typeof result).not.toBe('string')
+    expect(isNote(result as any)).toBe(false)
+    expect((result as any).alteration).toBe('x')
+  })
+
+  it('is case-insensitive', () => {
+    const result = tryParseInput('c#')
+    expect(typeof result).not.toBe('string')
+    expect((result as any).name).toBe('C')
+  })
+
+  it('returns error for empty string', () => {
+    expect(tryParseInput('')).toBeTypeOf('string')
+  })
+
+  it('returns error for invalid letter', () => {
+    expect(tryParseInput('X')).toBeTypeOf('string')
+  })
+
+  it('returns error for invalid alteration', () => {
+    expect(tryParseInput('Cy')).toBeTypeOf('string')
+  })
+
+  it('returns error for too-long input', () => {
+    expect(tryParseInput('Cbb99')).toBeTypeOf('string')
+  })
+})
+
+describe('expandPitchClass', () => {
+  it('returns Notes within the MIDI range', () => {
+    const pc = tryParseInput('C')
+    expect(isNote(pc as any)).toBe(false)
+    const notes = expandPitchClass(pc as any, 55, 100)
+    expect(notes.length).toBeGreaterThan(0)
+    for (const n of notes) {
+      expect(n.name).toBe('C')
+      expect(n.number).toBeGreaterThanOrEqual(55)
+      expect(n.number).toBeLessThanOrEqual(100)
+    }
+  })
+
+  it('returns C4, C5, C6, C7 for violin range', () => {
+    const pc = tryParseInput('C')
+    const notes = expandPitchClass(pc as any, 55, 100)
+    expect(notes.map(n => n.text())).toEqual(['C4', 'C5', 'C6', 'C7'])
+  })
+
+  it('returns empty array when no octave fits', () => {
+    const pc = tryParseInput('C')
+    const notes = expandPitchClass(pc as any, 61, 71)
+    expect(notes).toEqual([])
+  })
+})
+
+describe('generateNoteCombinations', () => {
+  it('returns a single combination when all inputs have octaves', () => {
+    const inputs = [parse('G3'), parse('D4')]
+    const combos = generateNoteCombinations(inputs, 0, 127)
+    expect(combos).toHaveLength(1)
+    expect(combos[0]!.map(n => n.text())).toEqual(['G3', 'D4'])
+  })
+
+  it('expands a PitchClass into multiple combinations', () => {
+    const pc = tryParseInput('C')
+    const note = parse('G5')
+    const combos = generateNoteCombinations([pc as any, note], 55, 100)
+    expect(combos.length).toBeGreaterThan(1)
+    for (const combo of combos) {
+      expect(combo).toHaveLength(2)
+      expect(combo[0]!.name).toBe('C')
+      expect(combo[1]!.text()).toBe('G5')
+    }
+  })
+
+  it('produces cartesian product for two PitchClasses', () => {
+    const c = tryParseInput('C')
+    const g = tryParseInput('G')
+    const combos = generateNoteCombinations([c as any, g as any], 55, 100)
+    const cCount = expandPitchClass(c as any, 55, 100).length
+    const gCount = expandPitchClass(g as any, 55, 100).length
+    expect(combos).toHaveLength(cCount * gCount)
+  })
+
+  it('returns empty when a PitchClass has no valid octaves', () => {
+    const pc = tryParseInput('C')
+    const combos = generateNoteCombinations([pc as any], 61, 71)
+    expect(combos).toHaveLength(0)
   })
 })

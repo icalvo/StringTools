@@ -8,14 +8,16 @@ import FingeringsDescription from '@/StringStopsFingeringsDescription.vue'
 import { useFingeringStore } from '@/stores/fingeringsStore'
 import CheckboxBase from '@/components/CheckboxBase.vue'
 import { useInstrumentsStore } from '@/stores/instrumentsStore'
-import { parse, calculateFingerings, hasNoGaps, hasPossibleStretch, noteName } from 'string-fingerings'
+import type { Note, NoteInput, Stop } from 'string-fingerings'
+import { parse, calculateFingerings, hasNoGaps, hasPossibleStretch, noteName, isNote, generateNoteCombinations } from 'string-fingerings'
 import InfoOverlay from "@/components/InfoOverlay.vue";
 
 const fingeringsStore = useFingeringStore()
 const instrumentsStore = useInstrumentsStore()
 
 const selectedInstrument = ref(0)
-const parsedNotes = ref([parse('G3'), parse('D4')])
+const parsedNotes = ref<NoteInput[]>([parse('G3'), parse('D4')])
+const validCombinations = ref<Note[][]>([])
 const validateNoGaps = ref(true)
 const validatePossibleStretch = ref(true)
 const includeNaturalHarmonics = ref(false)
@@ -35,17 +37,38 @@ watch(
     includeNaturalHarmonics
   ],
   ([inst, , rparsedNotes, rvalidateNoGaps, rvalidatePossibleStretch, rincludeNaturalHarmonics]) => {
-    const validations = []
+    const validations: Function[] = []
     if (rvalidateNoGaps) validations.push(hasNoGaps)
     if (rvalidatePossibleStretch) validations.push(hasPossibleStretch)
 
-    const newFingerings = calculateFingerings(
-      inst,
-      rparsedNotes.map((n) => n.number) as number[],
-      validations,
-      rincludeNaturalHarmonics
+    const minMidi = inst.strings.reduce((prev, curr) => {
+      const additional = (curr.additionalOpenSemitones ?? []).map((s) => s + curr.openNote.number)
+      return Math.min(prev, curr.openNote.number, ...additional)
+    }, Infinity)
+    const maxMidi = inst.strings.reduce(
+      (prev, curr) => Math.max(prev, curr.openNote.number + (curr.stops ?? inst.stops)),
+      0
     )
-    fingeringsStore.loadFingerings(newFingerings)
+
+    const combinations = generateNoteCombinations(rparsedNotes, minMidi, maxMidi)
+    const allFingerings: Stop[][] = []
+    const validCombos: Note[][] = []
+
+    for (const combo of combinations) {
+      const fingerings = calculateFingerings(
+        inst,
+        combo.map((n) => n.number),
+        validations,
+        rincludeNaturalHarmonics
+      )
+      if (fingerings.length > 0) {
+        validCombos.push(combo)
+        allFingerings.push(...fingerings)
+      }
+    }
+
+    validCombinations.value = validCombos
+    fingeringsStore.loadFingerings(allFingerings)
   }, {deep: true}
 )
 </script>
@@ -69,9 +92,10 @@ watch(
             <div>
               <label for="notes" class="font-bold text-gray-500">Notes <InfoOverlay>
                 <p class="mb-3">Introduce one or more notes, separated by spaces.</p>
-                <p class="mb-3">Each note has a note letter (case-insensitive), an optional alteration and an octave number.</p>
+                <p class="mb-3">Each note has a note letter (case-insensitive), an optional alteration and an optional octave number.</p>
                 <p class="mb-3">Valid alterations are: #, b, x and bb.</p>
                 <p class="mb-3">The middle C is C4.</p>
+                <p class="mb-3">If the octave is omitted (e.g. "C" or "C#"), all valid octave combinations within the instrument's range will be shown.</p>
                 <p class="mb-3">You can also use a MIDI keyboard to input the notes. <strong>Please focus on the input box before playing the notes.</strong></p>
               </InfoOverlay></label>
               <NotesInput
@@ -99,7 +123,7 @@ watch(
                       :max-notes="1"
                       placeholder="C5"
                       class="shadow border bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                      @update:model-value="notes => { if (notes && notes[0]) instrumentsStore.changeOpenNote(selectedInstrument, index, notes[0]) }"
+                      @update:model-value="notes => { if (notes && notes[0] && isNote(notes[0])) instrumentsStore.changeOpenNote(selectedInstrument, index, notes[0]) }"
                   />
                 </div>
               </div>
@@ -121,7 +145,7 @@ watch(
                       :max-notes="1"
                       placeholder="C5"
                       class="shadow border bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                      @update:model-value="notes => { if (notes && notes[0]) instrumentsStore.changeHighestNote(selectedInstrument, index, notes[0]) }"
+                      @update:model-value="notes => { if (notes && notes[0] && isNote(notes[0])) instrumentsStore.changeHighestNote(selectedInstrument, index, notes[0]) }"
                   />
                 </div>
               </div>
@@ -150,7 +174,7 @@ watch(
           </div>
         </div>
         <ScoreDisplay
-          :notes="parsedNotes.map((note) => ({ note, harmonic: false }))"
+          :note-groups="validCombinations.map(combo => combo.map(note => ({ note, harmonic: false })))"
           :instrument="selectedInstrument"
         />
         <FingeringsDescription :instrument="instrument" />

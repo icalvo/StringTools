@@ -1,8 +1,16 @@
-﻿# Changelog
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [Unreleased]
+### Added
+- `PitchClass` type and `NoteInput` union type.
+- `tryParseInput()` for parsing notes with optional octave.
+- `isNote()` type guard.
+- `expandPitchClass()` and `generateNoteCombinations()` helpers.
+
 ## [1.0.2] - 2025-08-28
 ### Removed
 - [BREAKING] Removed `String.additionalOpenNotes`

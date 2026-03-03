@@ -9,7 +9,7 @@ This tool calculates multiple-stop fingerings for the provided notes.
 
 Features:
 - Four instruments: violin, viola, cello and double 5-string double bass.
-- Note input by text (e.g. `D5 G5`) or MIDI input.
+- Note input by text (e.g. `D5 G5`) or MIDI input. The octave can be omitted (e.g. `C` or `C#`); all valid octave combinations within the instrument's range are shown.
 - Can select how far down the fingerboard can the player reach.
 - Optionally, calculates fingerings with gaps (skipped strings in the middle) which are useful for pizzicato.
 - Optionally, can include fingerings with finger stretches that are too wide.

@@ -1,4 +1,4 @@
-﻿import type {Instrument, InstrumentString, Note, Stop, StopCalculationData} from './types.js'
+import type {Instrument, InstrumentString, Note, NoteInput, PitchClass, Stop, StopCalculationData} from './types.js'
 class NoteImpl implements Note {
     constructor(
         public name: Note['name'],
@@ -30,6 +30,15 @@ class NoteImpl implements Note {
             ticks = octave - 6
             return `${alteration}${noteName}${"'".repeat(ticks)}`
         }
+    }
+}
+class PitchClassImpl implements PitchClass {
+    constructor(
+        public name: PitchClass['name'],
+        public alteration: PitchClass['alteration']
+    ) {}
+    text() {
+        return this.name + this.alteration
     }
 }
 export function tryParse(noteText: string): Note | string {
@@ -68,6 +77,74 @@ export function parse(noteText: string): Note {
     if (typeof result === 'string') throw result
     return result
 }
+
+/**
+ * Parses a note with an optional octave. If the octave is present, returns a Note.
+ * If the octave is absent, returns a PitchClass (e.g. "C", "C#", "Db", "Ebb", "Fx").
+ */
+export function tryParseInput(noteText: string): NoteInput | string {
+    noteText = noteText.trim()
+    if (noteText.length < 1) return 'Note names must be at least one character long'
+    if (noteText.length > 4) return 'Note names must be at most four characters long'
+    const firstChar = noteText.charAt(0).toUpperCase()
+    if (firstChar < 'A' || firstChar > 'G') return 'First char must be A-G'
+    const lastChar = noteText.charAt(noteText.length - 1)
+    if (lastChar >= '0' && lastChar <= '9') {
+        return tryParse(noteText)
+    }
+    const alteration = noteText.substring(1)
+    switch (alteration) {
+        case 'bb': case 'x': case 'b': case '#': case '':
+            break
+        default:
+            return 'Alteration must be #, b, x or bb. Text: ' + noteText + ', alteration: ' + alteration
+    }
+    return new PitchClassImpl(
+        firstChar as PitchClass['name'],
+        alteration as PitchClass['alteration']
+    )
+}
+
+export function isNote(input: NoteInput): input is Note {
+    return 'octave' in input
+}
+
+/**
+ * Expands a PitchClass into all Notes whose MIDI number falls within [minMidi, maxMidi].
+ */
+export function expandPitchClass(pc: PitchClass, minMidi: number, maxMidi: number): Note[] {
+    const results: Note[] = []
+    for (let octave = 0; octave <= 9; octave++) {
+        const result = tryParse(pc.name + pc.alteration + octave)
+        if (typeof result === 'string') continue
+        if (result.number >= minMidi && result.number <= maxMidi) {
+            results.push(result)
+        }
+    }
+    return results
+}
+
+/**
+ * Generates all possible Note[] combinations from NoteInput[].
+ * Notes with octaves produce a single option; PitchClasses are expanded
+ * into all octaves within the given MIDI range.
+ */
+export function generateNoteCombinations(inputs: NoteInput[], minMidi: number, maxMidi: number): Note[][] {
+    const expanded: Note[][] = inputs.map(input => {
+        if (isNote(input)) return [input]
+        return expandPitchClass(input, minMidi, maxMidi)
+    })
+    return cartesianProduct(expanded)
+}
+
+function cartesianProduct(arrays: Note[][]): Note[][] {
+    if (arrays.length === 0) return [[]]
+    const [first, ...rest] = arrays
+    if (!first || first.length === 0) return []
+    const restProduct = cartesianProduct(rest)
+    return first.flatMap(item => restProduct.map(combo => [item, ...combo]))
+}
+
 /**
  * Gets the MIDI note number from a text representation (middle C is 'C4')
  * @param noteName Can include sharp (#) and flat (b) alterations, like Db5 or F#2.

@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import type { Note } from 'string-fingerings'
 import { renderAbc } from 'abcjs'
 import {computed, useTemplateRef, watch} from 'vue'
@@ -10,7 +10,7 @@ const instruments = instrumentsStore.instruments
 
 const props = withDefaults(
     defineProps<{
-      notes: {note:Note,harmonic:boolean}[] | null
+      noteGroups: {note:Note,harmonic:boolean}[][] | null
       instrument: number | UiInstrument
       scale?: number
     }>(),
@@ -22,7 +22,8 @@ const instrument = computed(() =>
     typeof props.instrument === "number"
     ? instruments[props.instrument]
     : props.instrument)
-function showScore(target: HTMLElement, notes: {note:Note,harmonic:boolean}[], instrument: UiInstrument) {
+
+function showScore(target: HTMLElement, noteGroups: {note:Note,harmonic:boolean}[][], instrument: UiInstrument) {
   const lowestNote = instrument.strings.reduce((prev, curr) => {
     const additionalOpenSemitones = curr.additionalOpenSemitones ?? []
     const additionalOpenNotes = additionalOpenSemitones.map((s) => s + curr.openNote.number)
@@ -32,28 +33,36 @@ function showScore(target: HTMLElement, notes: {note:Note,harmonic:boolean}[], i
     (prev, curr) => Math.max(prev, curr.openNote.number + instrument.stops),
     0
   )
-  if (notes.some((n) => n.note.number < lowestNote || n.note.number > highestNote)) {
-    notes = []
-  }
 
-  const abcnotes = notes.map(n => ({note:n.note, hst:n.harmonic?'!style=harmonic!':''})).map((n) => `${n.hst}${n.note.abcnote()}`).join('')
-  const score = `X:1/4\nK:C ${instrument.clef}\n[${abcnotes}]2`
+  const validGroups = noteGroups.filter(
+    notes => !notes.some((n) => n.note.number < lowestNote || n.note.number > highestNote)
+  )
+
+  const chords = validGroups.map(notes => {
+    const abcnotes = notes
+      .map(n => ({note:n.note, hst:n.harmonic?'!style=harmonic!':''}))
+      .map((n) => `${n.hst}${n.note.abcnote()}`)
+      .join('')
+    return `[${abcnotes}]2`
+  }).join(' ')
+
+  const scoreText = `X:1/4\nK:C ${instrument.clef}\n${chords}`
   const visualOptions = {
     scale: props.scale,
     visualTranspose: instrument.transposition ?? 0
   }
 
-  renderAbc(target, score, visualOptions)
+  renderAbc(target, scoreText, visualOptions)
 }
 
 function show() {
   if (score.value === null) return
-  if (props.notes !== null) showScore(score.value, props.notes, instrument.value)
+  if (props.noteGroups !== null) showScore(score.value, props.noteGroups, instrument.value)
   else showScore(score.value, [], instrument.value)
 }
 
 
-watch(() => props.notes, show)
+watch(() => props.noteGroups, show, { deep: true })
 watch(() => props.instrument, show)
 </script>
 
