@@ -8,7 +8,7 @@
     "website"
   ],
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky install || true",
     "web": "cd website && npm run dev",
     "test": "cd packages/string-fingerings && npm run dev"
   },
