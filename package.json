@@ -4,8 +4,7 @@
   "private": true,
   "main": "index.js",
   "workspaces": [
-    "packages/*",
-    "website"
+    "packages/*"
   ],
   "scripts": {
     "prepare": "husky install || true",
