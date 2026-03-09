@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Note } from 'string-fingerings'
 import { renderAbc } from 'abcjs'
-import {computed, useTemplateRef, watch} from 'vue'
+import { computed, useTemplateRef, watch } from 'vue'
 import { type UiInstrument, useInstrumentsStore } from '@/stores/instrumentsStore'
 
 const instrumentsStore = useInstrumentsStore()
@@ -9,21 +9,21 @@ const instruments = instrumentsStore.instruments
 
 
 const props = withDefaults(
-    defineProps<{
-      noteGroups: {note:Note,harmonic:boolean}[][] | null
-      instrument: number | UiInstrument
-      scale?: number
-    }>(),
-    { scale: 2 })
+  defineProps<{
+    noteGroups: { note: Note, harmonic: boolean }[][] | null
+    instrument: number | UiInstrument
+    scale?: number
+  }>(),
+  { scale: 2 })
 
 const score = useTemplateRef('score')
 
-const instrument = computed(() => 
-    typeof props.instrument === "number"
+const instrument = computed(() =>
+  typeof props.instrument === "number"
     ? instruments[props.instrument]
     : props.instrument)
 
-function showScore(target: HTMLElement, noteGroups: {note:Note,harmonic:boolean}[][], instrument: UiInstrument) {
+function showScore(target: HTMLElement, noteGroups: { note: Note, harmonic: boolean }[][], instrument: UiInstrument) {
   const lowestNote = instrument.strings.reduce((prev, curr) => {
     const additionalOpenSemitones = curr.additionalOpenSemitones ?? []
     const additionalOpenNotes = additionalOpenSemitones.map((s) => s + curr.openNote.number)
@@ -40,19 +40,26 @@ function showScore(target: HTMLElement, noteGroups: {note:Note,harmonic:boolean}
 
   const chords = validGroups.map(notes => {
     const abcnotes = notes
-      .map(n => ({note:n.note, hst:n.harmonic?'!style=harmonic!':''}))
+      .map(n => ({ note: n.note, hst: n.harmonic ? '!style=harmonic!' : '' }))
       .map((n) => `${n.hst}${n.note.abcnote()}`)
       .join('')
     return `[${abcnotes}]2`
   }).join(' ')
 
   const scoreText = `X:1/4\nK:C ${instrument.clef}\n${chords}`
+  // Scale staff width with chord count so separation between chords stays constant
+  const pixelsPerChord = 40
+  const staffwidth = Math.max(300, validGroups.length * pixelsPerChord)
   const visualOptions = {
     scale: props.scale,
-    visualTranspose: instrument.transposition ?? 0
+    visualTranspose: instrument.transposition ?? 0,
+    staffwidth
   }
 
   renderAbc(target, scoreText, visualOptions)
+  // abcjs sets overflow: hidden on the target; override for horizontal scroll when needed
+  target.style.overflowX = 'auto'
+  target.style.overflowY = 'hidden'
 }
 
 function show() {
