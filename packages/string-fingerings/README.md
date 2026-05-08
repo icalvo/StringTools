@@ -100,6 +100,13 @@ generateNoteCombinations([c, parse("G5")], 55, 100);
 | `hasNoGaps(_instrument, fingering)`                                              | True if used strings are consecutive (no skipped string).                                                                                             |
 | `hasPossibleStretch(instrument, fingering)`                                      | True if fingering is within stretch limits (`fingeringHardness !== 1.0`).                                                                             |
 
+## Forsyth (orchestral string writing)
+
+| Function                                      | Description                                                                                                                                        |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hasForsythValidation(instrument)`            | `true` when the instrument has encoded rules (e.g. violin double stops in M1); use to show a UI toggle.                                            |
+| `forsythCompatible(instrument, fingering)`    | `true` if the fingering satisfies encoded guidance from Cecil Forsyth’s *Orchestration*; gate with `hasForsythValidation` for unsupported families. |
+
 **Example: define an instrument and get fingerings**
 
 ```ts

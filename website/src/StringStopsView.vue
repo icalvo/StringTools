@@ -9,7 +9,17 @@ import { useFingeringStore } from '@/stores/fingeringsStore'
 import CheckboxBase from '@/components/CheckboxBase.vue'
 import { useInstrumentsStore } from '@/stores/instrumentsStore'
 import type { Note, NoteInput, Stop } from 'string-fingerings'
-import { parse, calculateFingerings, hasNoGaps, hasPossibleStretch, noteName, isNote, generateNoteCombinations } from 'string-fingerings'
+import {
+  parse,
+  calculateFingerings,
+  hasNoGaps,
+  hasPossibleStretch,
+  forsythCompatible,
+  hasForsythValidation,
+  noteName,
+  isNote,
+  generateNoteCombinations
+} from 'string-fingerings'
 import InfoOverlay from "@/components/InfoOverlay.vue";
 
 const fingeringsStore = useFingeringStore()
@@ -20,12 +30,17 @@ const parsedNotes = ref<NoteInput[]>([parse('G3'), parse('D4')])
 const validCombinations = ref<Note[][]>([])
 const validateNoGaps = ref(true)
 const validatePossibleStretch = ref(true)
+const validateForsyth = ref(false)
 const includeNaturalHarmonics = ref(false)
 const showScordatura = ref(false)
 const showHighestStops = ref(false)
 
 const instrument = computed(() => instrumentsStore.instruments[selectedInstrument.value])
 const stops = computed(() => instrument.value.stops)
+
+watch(instrument, (inst) => {
+  if (!hasForsythValidation(inst)) validateForsyth.value = false
+})
 
 watch(
   [
@@ -34,12 +49,14 @@ watch(
     parsedNotes,
     validateNoGaps,
     validatePossibleStretch,
+    validateForsyth,
     includeNaturalHarmonics
   ],
-  ([inst, , rparsedNotes, rvalidateNoGaps, rvalidatePossibleStretch, rincludeNaturalHarmonics]) => {
+  ([inst, , rparsedNotes, rvalidateNoGaps, rvalidatePossibleStretch, rvalidateForsyth, rincludeNaturalHarmonics]) => {
     const validations: Function[] = []
     if (rvalidateNoGaps) validations.push(hasNoGaps)
     if (rvalidatePossibleStretch) validations.push(hasPossibleStretch)
+    if (hasForsythValidation(inst) && rvalidateForsyth) validations.push(forsythCompatible)
 
     const minMidi = inst.strings.reduce((prev, curr) => {
       const additional = (curr.additionalOpenSemitones ?? []).map((s) => s + curr.openNote.number)
@@ -167,6 +184,23 @@ id="notes"
                   ${{ instrument.maxStretch }}mm between contiguous strings. It also checks that the stretch between the
                   highest and the lowest stop cannot be greater than {{ instrument.maxStretch * 1.02 }}mm.</p>
               </InfoOverlay>
+            </CheckboxBase>
+            <CheckboxBase
+              v-if="hasForsythValidation(instrument)"
+              id="validateForsyth"
+              v-model="validateForsyth"
+            >Forsyth (1914)&nbsp;<InfoOverlay>
+              <p class="mb-3">
+                Filter fingerings using conservative rules from Cecil Forsyth’s
+                <a
+                  class="text-blue-700 underline"
+                  href="https://imslp.org/wiki/Orchestration_(Forsyth,_Cecil)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >Orchestration</a>
+                (violin double stops in this version). Natural harmonics are not checked.
+              </p>
+            </InfoOverlay>
             </CheckboxBase>
             <CheckboxBase id="includeNaturalHarmonics" v-model="includeNaturalHarmonics">Natural harmonics&nbsp;
               <InfoOverlay>
