@@ -92,7 +92,6 @@ These are instructions on how to work with a Github issue with number `<ISSUE>`.
 - `gh issue develop <ISSUE> -c [-n <BRANCH_NAME>]`
 - Development and commits (can push but not needed).
 - The site uses the local `string-fingerings` workspace package (`npm install` at the repo root links it into `website`).
-- To refresh published API docs: run the **Deploy docs to Pages** workflow from the Actions tab (or `gh workflow run` with that workflow name).
 - `gh pr create --body "Fixes #<ISSUE>" -e`
 - `gh pr view <PR> -w`: Review PR and push what's needed.
 - `gh pr merge <PR>`
