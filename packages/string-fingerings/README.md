@@ -4,9 +4,7 @@ Utilities for calculating fingerings on string instruments: parse note names, co
 
 ## Installation
 
-```bash
-npm install string-fingerings
-```
+This package is part of the [StringTools](https://github.com/icalvo/StringTools) monorepo and is not published to npm. From the repo root, add it as a workspace dependency (see the root `package.json` `workspaces` field), or use a `file:` dependency pointing at `packages/string-fingerings`.
 
 ## Overview
 

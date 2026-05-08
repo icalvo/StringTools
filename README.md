@@ -32,15 +32,21 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
 ## Project Setup
 
+From the repository root (npm workspaces: `packages/*` and `website`):
+
 ```sh
 npm install
 ```
 
+This links the local `string-fingerings` package into the website and runs its `prepare` script so `dist/` exists for imports.
+
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+npm run web
 ```
+
+(or `cd website && npm run dev`)
 
 ### Type-Check, Compile and Minify for Production
 
@@ -85,11 +91,8 @@ These are instructions on how to work with a Github issue with number `<ISSUE>`.
 
 - `gh issue develop <ISSUE> -c [-n <BRANCH_NAME>]`
 - Development and commits (can push but not needed).
-- If package release is needed, decide `<RTYPE>` to be major, minor or patch:
-  - First release: `publish.ps1 pre<RTYPE>`
-  - Rest of prereleases: `publish.ps1 prerelease`
-  - Final release: `publish.ps1 release`
-  - After every release is published with version `<VERSION>`: `cd website; npm install string-fingerings@<VERSION>`
+- The site uses the local `string-fingerings` workspace package (`npm install` at the repo root links it into `website`).
+- To refresh published API docs: run the **Deploy docs to Pages** workflow from the Actions tab (or `gh workflow run` with that workflow name).
 - `gh pr create --body "Fixes #<ISSUE>" -e`
 - `gh pr view <PR> -w`: Review PR and push what's needed.
 - `gh pr merge <PR>`
