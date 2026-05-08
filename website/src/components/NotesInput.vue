@@ -1,8 +1,8 @@
-﻿<script setup lang="ts">
+n<script setup lang="ts">
 
-import type { Note } from 'string-fingerings'
+import type { NoteInput } from 'string-fingerings'
 import { computed, onMounted, onUnmounted, ref, watch, useTemplateRef } from 'vue'
-import { noteName, tryParse } from 'string-fingerings'
+import { noteName, tryParseInput } from 'string-fingerings'
 
 class Queue<T> implements Iterable<T> {
   private storage: T[] = [];
@@ -37,7 +37,7 @@ class Queue<T> implements Iterable<T> {
     this.set.clear()
   }
 }
-const notes = defineModel<Note[]>()
+const notes = defineModel<NoteInput[]>()
 
 const props = defineProps<{
   maxNotes: number
@@ -55,7 +55,7 @@ const reprToNotes = computed(() => {
   const parsedNotes = representation.value
     .split(' ')
     .filter((s) => s !== '')
-    .map((noteName) => ({ noteName, note: tryParse(noteName) }))
+    .map((noteName) => ({ noteName, note: tryParseInput(noteName) }))
 
   for (const result of parsedNotes) {
     if (typeof result.note === 'string') {
@@ -67,7 +67,7 @@ const reprToNotes = computed(() => {
     }
   }
 
-  return parsedNotes.map((r) => r.note as Note)
+  return parsedNotes.map((r) => r.note as NoteInput)
 })
 
 watch(notesToRepr, (newValue) => {

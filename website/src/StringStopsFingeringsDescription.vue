@@ -1,5 +1,6 @@
 ﻿<script setup lang="ts">
 import { computed } from 'vue'
+import { noteName } from 'string-fingerings'
 import { fingeringColor } from '@/data/presentation'
 import { useFingeringStore } from '@/stores/fingeringsStore'
 import ToggleBase from '@/components/ToggleBase.vue'
@@ -21,6 +22,7 @@ const data = computed(() =>
       return {
         stringName,
         note: stop.noteNumber,
+        noteName: noteName(stop.noteNumber),
         isHarmonic: stop.naturalHarmonic,
         stopDesc:
           stop.stopIndex === 0
@@ -34,7 +36,7 @@ const data = computed(() =>
   }))
 )
 
-function toggleAll(enabled: boolean|undefined) {
+function toggleAll(enabled: boolean | undefined) {
   ;[...Array(data.value.length).keys()].forEach((index) =>
     fingeringsStore.toggleFingering(index, enabled ?? false)
   )
@@ -44,40 +46,34 @@ function toggleAll(enabled: boolean|undefined) {
 <template>
   <div>
     <div class="mb-2">
-      <ToggleBase id="toggleAll" color="gray" :input="true" class="mb-2" @update:input="toggleAll"
-        >Toggle all</ToggleBase
-      >
+      <ToggleBase id="toggleAll" color="gray" :input="true" class="mb-2" @update:input="toggleAll">Toggle all
+      </ToggleBase>
     </div>
     <div v-if="data.length > 0" class="flex flex-row flex-wrap">
       <div
-        v-for="(f, index) in data"
-        :key="index"
-        class="flex-initial basis-1/5 border-2 border-gray-300 rounded-2xl shadow-md p-2"
-      >
+v-for="(f, index) in data" :key="index"
+        class="flex-initial basis-1/5 border-2 border-gray-300 rounded-2xl shadow-md p-2">
         <div>
           <ToggleBase
-            :id="`fingering${index + 1}`"
-            :color="f.color"
-            :input="f.enabled"
-            @update:input="(event) => fingeringsStore.toggleFingering(index, event)"
-          >
+:id="`fingering${index + 1}`" :color="f.color" :input="f.enabled"
+            @update:input="(event) => fingeringsStore.toggleFingering(index, event)">
             <h2 class="text-xl">Fingering {{ f.fingeringNumber }}</h2>
           </ToggleBase>
 
           <ul class="p-4">
             <li v-for="(s, sindex) in f.stops" :key="sindex" class="list-disc text-xs">
-              {{ s.stopDesc }} {{ s.stretch }}
+              {{ s.noteName }}: {{ s.stopDesc }} {{ s.stretch }}
             </li>
           </ul>
         </div>
-<!--        <div>-->
-<!--          <ScoreDisplay-->
-<!--            v-if="f.hasHarmonics"-->
-<!--            :notes="f.stops.map((s) => ({ note: parse(noteName(s.note)), harmonic: s.isHarmonic }))"-->
-<!--            :instrument="instrument"-->
-<!--            :scale="1"-->
-<!--          />-->
-<!--        </div>-->
+        <!--        <div>-->
+        <!--          <ScoreDisplay-->
+        <!--            v-if="f.hasHarmonics"-->
+        <!--            :notes="f.stops.map((s) => ({ note: parse(noteName(s.note)), harmonic: s.isHarmonic }))"-->
+        <!--            :instrument="instrument"-->
+        <!--            :scale="1"-->
+        <!--          />-->
+        <!--        </div>-->
       </div>
     </div>
     <div v-if="data.length === 0">No fingerings found.</div>

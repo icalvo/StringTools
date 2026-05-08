@@ -1,6 +1,7 @@
 {
   "name": "string-fingerings",
-  "version": "1.0.3-1",
+  "version": "2.0.0-2",
+  "private": true,
   "description": "Utilities for calculating fingerings on string instruments",
   "files": [
     "dist"
@@ -26,13 +27,13 @@
   "homepage": "https://github.com/icalvo/StringTools#readme",
   "scripts": {
     "build": "tsc",
+    "prepare": "npm run build",
     "dev": "vitest --printConsoleTrace=true",
     "ci": "npm run build",
     "check-format": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "test": "vitest run",
-    "docs": "typedoc",
-    "prepublishOnly": "npm run ci"
+    "docs": "typedoc"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",

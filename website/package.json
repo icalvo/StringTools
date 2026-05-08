@@ -20,7 +20,7 @@
     "@netlify/functions": "^4.2.4",
     "abcjs": "^6.4.3",
     "pinia": "^2.2.4",
-    "string-fingerings": "^1.0.2",
+    "string-fingerings": "file:../packages/string-fingerings",
     "vue": "^3.5.11",
     "vue-router": "^4.4.5"
   },

@@ -8,8 +8,9 @@ This tool calculates multiple-stop fingerings for the provided notes.
 ![Screenshot](docs/screenshot.png)
 
 Features:
+
 - Four instruments: violin, viola, cello and double 5-string double bass.
-- Note input by text (e.g. `D5 G5`) or MIDI input.
+- Note input by text (e.g. `D5 G5`) or MIDI input. The octave can be omitted (e.g. `C` or `C#`); all valid octave combinations within the instrument's range are shown.
 - Can select how far down the fingerboard can the player reach.
 - Optionally, calculates fingerings with gaps (skipped strings in the middle) which are useful for pizzicato.
 - Optionally, can include fingerings with finger stretches that are too wide.
@@ -31,15 +32,21 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
 ## Project Setup
 
+From the repository root (npm workspaces: `packages/*` and `website`):
+
 ```sh
 npm install
 ```
 
+This links the local `string-fingerings` package into the website and runs its `prepare` script so `dist/` exists for imports.
+
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+npm run web
 ```
+
+(or `cd website && npm run dev`)
 
 ### Type-Check, Compile and Minify for Production
 
@@ -77,16 +84,14 @@ npm run test:e2e -- --debug
 ```sh
 npm run lint
 ```
+
 ### Github CLI flow
 
 These are instructions on how to work with a Github issue with number `<ISSUE>`. If you don't remember the issue number, you can use `gh issue list` to see all the open issues.
+
 - `gh issue develop <ISSUE> -c [-n <BRANCH_NAME>]`
 - Development and commits (can push but not needed).
-- If package release is needed, decide `<RTYPE>` to be major, minor or patch:
-  - First release: `publish.ps1 pre<RTYPE>`
-  - Rest of prereleases: `publish.ps1 prerelease`
-  - Final release: `publish.ps1 release`
-  - After every release is published with version `<VERSION>`: `cd website; npm install string-fingerings@<VERSION>`
+- The site uses the local `string-fingerings` workspace package (`npm install` at the repo root links it into `website`).
 - `gh pr create --body "Fixes #<ISSUE>" -e`
 - `gh pr view <PR> -w`: Review PR and push what's needed.
 - `gh pr merge <PR>`
